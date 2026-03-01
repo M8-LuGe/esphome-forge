@@ -13,27 +13,35 @@ RUN apk add --no-cache \
 # ── Python Backend ────────────────────────────────────────────────────────────
 WORKDIR /app/backend
 COPY backend/requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
 COPY backend/ .
 
+# ── ESPHome-Schema vorab laden (kein GitHub-Call beim ersten Start) ───────────
+RUN mkdir -p /app/backend/components/cache/schema \
+    && wget -qO /tmp/schema.zip \
+       "https://github.com/esphome/esphome-schema/releases/latest/download/schema.zip" \
+    && python3 -c "import zipfile,io,pathlib; \
+       z=zipfile.ZipFile('/tmp/schema.zip'); \
+       [pathlib.Path(f'/app/backend/components/cache/schema/{i.filename.split(\"/\")[-1]}').write_bytes(z.read(i)) \
+        for i in z.infolist() if not i.is_dir() and i.filename.endswith('.json')]; \
+       print(f'Extracted {len([i for i in z.infolist() if i.filename.endswith(\".json\")])} schemas')" \
+    && rm /tmp/schema.zip
+
 # ── Frontend Build ────────────────────────────────────────────────────────────
-# npm ci nutzt package-lock.json fuer reproduzierbare Builds.
-# vite.config.ts: outDir '../frontend-dist' -> landet in /app/frontend-dist
 WORKDIR /app/frontend-src
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm ci --prefer-offline 2>/dev/null || npm install
 
 COPY frontend/ ./
-RUN npm run build && mv /app/frontend-dist /app/frontend
+RUN npm run build \
+    && mv /app/frontend-dist /app/frontend \
+    && rm -rf /app/frontend-src node_modules
 
 # ── Run-Script ────────────────────────────────────────────────────────────────
 COPY run.sh /
-RUN chmod +x /run.sh
+RUN chmod a+x /run.sh
 
-# ── Custom Boards Verzeichnis initialisieren ──────────────────────────────────
-RUN mkdir -p /share/esphome-forge/custom_boards
-
+WORKDIR /app/backend
 EXPOSE 7052
-
 CMD ["/run.sh"]

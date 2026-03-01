@@ -1,8 +1,9 @@
 import type { Board, BoardSummary, GpioConflictResult } from '@/types/board'
+import { API_BASE } from './base'
 
-// In HA Add-on läuft alles auf dem gleichen Origin → kein Prefix nötig.
-// Im Dev-Modus: vite.config.ts proxied /api → localhost:7052
-const BASE = '/api'
+// In HA Add-on läuft alles auf dem gleichen Origin.
+// Im Ingress-Modus wird der Prefix automatisch erkannt.
+const BASE = API_BASE
 
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`)

@@ -1,0 +1,696 @@
+{
+  "_meta": {
+    "description": "Kuratierte Metadaten für ESPHome-Komponenten. Ergänzen das automatisch generierte Schema.",
+    "version": "1.0.0"
+  },
+  "categories": {
+    "sensor-environmental": { "name": "Umwelt-Sensoren", "icon": "thermometer" },
+    "sensor-light":         { "name": "Licht-Sensoren", "icon": "sun" },
+    "sensor-motion":        { "name": "Bewegung & Präsenz", "icon": "radar" },
+    "sensor-distance":      { "name": "Distanz-Sensoren", "icon": "ruler" },
+    "sensor-electricity":   { "name": "Strom & Spannung", "icon": "zap" },
+    "sensor-air-quality":   { "name": "Luftqualität", "icon": "wind" },
+    "sensor-analog":        { "name": "Analog / ADC", "icon": "activity" },
+    "sensor-misc":          { "name": "Sonstige Sensoren", "icon": "gauge" },
+    "binary-sensor":        { "name": "Binäre Sensoren", "icon": "toggle-left" },
+    "display":              { "name": "Displays", "icon": "monitor" },
+    "light":                { "name": "Licht / LEDs", "icon": "lightbulb" },
+    "switch":               { "name": "Schalter", "icon": "power" },
+    "climate":              { "name": "Klima / HVAC", "icon": "fan" },
+    "cover":                { "name": "Abdeckungen / Rolladen", "icon": "blinds" },
+    "fan":                  { "name": "Lüfter", "icon": "fan" },
+    "media-audio":          { "name": "Audio / Media", "icon": "volume-2" },
+    "output":               { "name": "Ausgänge / PWM", "icon": "sliders-horizontal" },
+    "button":               { "name": "Buttons / Taster", "icon": "square" },
+    "number-select":        { "name": "Zahlen & Auswahlen", "icon": "hash" },
+    "time":                 { "name": "Zeit / RTC", "icon": "clock" },
+    "bus-interface":         { "name": "Bus-Interfaces", "icon": "cable" },
+    "io-expander":          { "name": "I/O Expander", "icon": "git-branch" },
+    "network":              { "name": "Netzwerk", "icon": "wifi" },
+    "bluetooth":            { "name": "Bluetooth / BLE", "icon": "bluetooth" },
+    "wireless":             { "name": "Funk / IR", "icon": "radio" },
+    "core":                 { "name": "ESPHome Core", "icon": "cpu" },
+    "misc":                 { "name": "Sonstiges", "icon": "package" },
+    "custom":               { "name": "Benutzerdefiniert", "icon": "wrench" }
+  },
+  "components": {
+    "dht": {
+      "name": "DHT11/22 Temperatur & Luftfeuchtigkeit",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "gpio",
+      "icon": "thermometer",
+      "description": "Digitaler Temperatur- & Luftfeuchtigkeitssensor (DHT11, DHT22, AM2302)",
+      "sub_sensors": ["temperature", "humidity"]
+    },
+    "bme280": {
+      "name": "BME280 Temperatur, Feuchtigkeit & Druck",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "thermometer",
+      "description": "Präziser I²C-Sensor für Temperatur, Luftfeuchtigkeit und Luftdruck",
+      "sub_sensors": ["temperature", "humidity", "pressure"]
+    },
+    "bme680": {
+      "name": "BME680 Umwelt-Sensor",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "thermometer",
+      "description": "I²C-Sensor für Temperatur, Feuchtigkeit, Druck und Gasresistenz (VOC)",
+      "sub_sensors": ["temperature", "humidity", "pressure", "gas_resistance"]
+    },
+    "bmp280": {
+      "name": "BMP280 Temperatur & Druck",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "thermometer",
+      "description": "Barometrischer Drucksensor mit Temperatur",
+      "sub_sensors": ["temperature", "pressure"]
+    },
+    "sht3xd": {
+      "name": "SHT3x-D Temperatur & Luftfeuchtigkeit",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "thermometer",
+      "description": "Hochgenauer I²C Temperatur- & Luftfeuchtigkeitssensor",
+      "sub_sensors": ["temperature", "humidity"]
+    },
+    "sht4x": {
+      "name": "SHT4x Temperatur & Luftfeuchtigkeit",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "thermometer",
+      "description": "Neue Generation Sensirion Temperatur & Feuchte-Sensor",
+      "sub_sensors": ["temperature", "humidity"]
+    },
+    "aht10": {
+      "name": "AHT10/20/21 Temperatur & Luftfeuchtigkeit",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "thermometer",
+      "description": "Günstiger I²C Temperatur- & Luftfeuchtigkeitssensor"
+    },
+    "dallas_temp": {
+      "name": "Dallas DS18B20 Temperatur",
+      "category": "sensor-environmental",
+      "platform_type": "sensor",
+      "bus_type": "1wire",
+      "icon": "thermometer",
+      "description": "1-Wire Temperatursensor (DS18B20, DS18S20)"
+    },
+    "bh1750": {
+      "name": "BH1750 Lichtsensor",
+      "category": "sensor-light",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "sun",
+      "description": "Digitaler Umgebungslichtsensor (Lux)"
+    },
+    "tsl2561": {
+      "name": "TSL2561 Lichtsensor",
+      "category": "sensor-light",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "sun",
+      "description": "Digitaler Lichtsensor für sichtbares und Infrarot-Licht"
+    },
+    "adc": {
+      "name": "ADC (Analoger Eingang)",
+      "category": "sensor-analog",
+      "platform_type": "sensor",
+      "bus_type": "gpio",
+      "icon": "activity",
+      "description": "Interner ADC des ESP – liest analoge Spannungswerte"
+    },
+    "ultrasonic": {
+      "name": "Ultraschall-Distanzsensor",
+      "category": "sensor-distance",
+      "platform_type": "sensor",
+      "bus_type": "gpio",
+      "icon": "ruler",
+      "description": "HC-SR04 und kompatible Ultraschall-Sensoren"
+    },
+    "vl53l0x": {
+      "name": "VL53L0X Laser-Distanzsensor",
+      "category": "sensor-distance",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "ruler",
+      "description": "Time-of-Flight Laser-Entfernungsmesser"
+    },
+    "ld2410": {
+      "name": "LD2410 mmWave Präsenzsensor",
+      "category": "sensor-motion",
+      "platform_type": "sensor",
+      "bus_type": "uart",
+      "icon": "radar",
+      "description": "24GHz Radar-Sensor für Bewegungs- und Präsenzerkennung"
+    },
+    "ld2412": {
+      "name": "LD2412 mmWave Präsenzsensor",
+      "category": "sensor-motion",
+      "platform_type": "sensor",
+      "bus_type": "uart",
+      "icon": "radar",
+      "description": "24GHz Radar-Sensor für Bewegungs- und Präsenzerkennung (verbessert)"
+    },
+    "ccs811": {
+      "name": "CCS811 CO₂ & VOC Sensor",
+      "category": "sensor-air-quality",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "wind",
+      "description": "CO₂- und VOC-Sensor für Luftqualitätsüberwachung"
+    },
+    "sgp4x": {
+      "name": "SGP4x VOC & NOx Sensor",
+      "category": "sensor-air-quality",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "wind",
+      "description": "Sensirion Luftqualitätssensor (VOC-Index, NOx-Index)"
+    },
+    "pmsx003": {
+      "name": "PMS5003/7003 Feinstaub-Sensor",
+      "category": "sensor-air-quality",
+      "platform_type": "sensor",
+      "bus_type": "uart",
+      "icon": "wind",
+      "description": "Plantower Feinstaub-Sensor (PM1.0, PM2.5, PM10)"
+    },
+    "hlw8012": {
+      "name": "HLW8012 Strom/Spannung/Leistung",
+      "category": "sensor-electricity",
+      "platform_type": "sensor",
+      "bus_type": "gpio",
+      "icon": "zap",
+      "description": "Leistungsmessung (z.B. in Sonoff POW)"
+    },
+    "ade7953": {
+      "name": "ADE7953 Leistungsmessung",
+      "category": "sensor-electricity",
+      "platform_type": "sensor",
+      "bus_type": "i2c",
+      "icon": "zap",
+      "description": "Hochpräziser Leistungsmess-IC (z.B. Shelly)"
+    },
+    "hx711": {
+      "name": "HX711 Wägezelle",
+      "category": "sensor-misc",
+      "platform_type": "sensor",
+      "bus_type": "gpio",
+      "icon": "gauge",
+      "description": "24-Bit ADC für Wägezellen und Kraftmessung"
+    },
+    "pulse_counter": {
+      "name": "Puls-Zähler",
+      "category": "sensor-misc",
+      "platform_type": "sensor",
+      "bus_type": "gpio",
+      "icon": "activity",
+      "description": "Zählt Pulse an einem GPIO (z.B. für Strom-/Wasserzähler)"
+    },
+    "wifi_signal": {
+      "name": "WiFi-Signalstärke",
+      "category": "sensor-misc",
+      "platform_type": "sensor",
+      "bus_type": "none",
+      "icon": "wifi",
+      "description": "RSSI des WiFi-Signals"
+    },
+
+    "gpio": {
+      "name": "GPIO Binärer Sensor",
+      "category": "binary-sensor",
+      "platform_type": "binary_sensor",
+      "bus_type": "gpio",
+      "icon": "toggle-left",
+      "description": "Einfacher digitaler Eingang (Taster, Reed-Kontakt, etc.)"
+    },
+    "esp32_touch": {
+      "name": "ESP32 Touch Pad",
+      "category": "binary-sensor",
+      "platform_type": "binary_sensor",
+      "bus_type": "gpio",
+      "icon": "hand",
+      "description": "Kapazitiver Touch-Sensor der ESP32 Touch-Pins"
+    },
+    "pn532": {
+      "name": "PN532 NFC/RFID Leser",
+      "category": "binary-sensor",
+      "platform_type": "binary_sensor",
+      "bus_type": "i2c",
+      "icon": "nfc",
+      "description": "NFC/RFID Tag-Reader (I²C oder SPI)"
+    },
+
+    "ili9xxx": {
+      "name": "ILI9xxx TFT Display",
+      "category": "display",
+      "platform_type": "display",
+      "bus_type": "spi",
+      "icon": "monitor",
+      "description": "TFT-Display-Controller (ILI9341, ILI9342, ILI9481, ILI9488, ST7789, etc.)"
+    },
+    "ssd1306_i2c": {
+      "name": "SSD1306 OLED (I²C)",
+      "category": "display",
+      "platform_type": "display",
+      "bus_type": "i2c",
+      "icon": "monitor",
+      "description": "0.96\" / 1.3\" OLED-Display über I²C"
+    },
+    "ssd1306_spi": {
+      "name": "SSD1306 OLED (SPI)",
+      "category": "display",
+      "platform_type": "display",
+      "bus_type": "spi",
+      "icon": "monitor",
+      "description": "SSD1306 OLED-Display über SPI"
+    },
+    "st7789v": {
+      "name": "ST7789V TFT Display",
+      "category": "display",
+      "platform_type": "display",
+      "bus_type": "spi",
+      "icon": "monitor",
+      "description": "TFT-Display mit ST7789V Controller"
+    },
+    "nextion": {
+      "name": "Nextion Touch Display",
+      "category": "display",
+      "platform_type": "display",
+      "bus_type": "uart",
+      "icon": "monitor",
+      "description": "Nextion HMI Touch-Display über UART"
+    },
+    "lvgl": {
+      "name": "LVGL Graphics",
+      "category": "display",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "layout-dashboard",
+      "description": "LVGL Graphics Framework für komplexe UI auf Displays"
+    },
+
+    "esp32_rmt_led_strip": {
+      "name": "ESP32 RMT LED Strip (WS2812)",
+      "category": "light",
+      "platform_type": "light",
+      "bus_type": "gpio",
+      "icon": "lightbulb",
+      "description": "Adressierbare LED-Streifen (WS2812, SK6812, etc.) über RMT"
+    },
+    "neopixelbus": {
+      "name": "NeoPixelBus LED Strip",
+      "category": "light",
+      "platform_type": "light",
+      "bus_type": "gpio",
+      "icon": "lightbulb",
+      "description": "NeoPixelBus-Bibliothek für addressierbare LEDs"
+    },
+    "binary": {
+      "name": "Binäres Licht",
+      "category": "light",
+      "platform_type": "light",
+      "bus_type": "none",
+      "icon": "lightbulb",
+      "description": "Einfaches An/Aus-Licht über einen Output"
+    },
+    "monochromatic": {
+      "name": "Monochromatisches Licht",
+      "category": "light",
+      "platform_type": "light",
+      "bus_type": "none",
+      "icon": "lightbulb",
+      "description": "Dimmbares Licht mit einem Kanal"
+    },
+    "rgbw": {
+      "name": "RGBW Licht",
+      "category": "light",
+      "platform_type": "light",
+      "bus_type": "none",
+      "icon": "palette",
+      "description": "RGB + weißer Kanal Licht-Steuerung"
+    },
+    "cwww": {
+      "name": "Kaltweiß + Warmweiß Licht",
+      "category": "light",
+      "platform_type": "light",
+      "bus_type": "none",
+      "icon": "lightbulb",
+      "description": "Doppelkanal-Licht mit einstellbarer Farbtemperatur"
+    },
+
+    "gpio_switch": {
+      "name": "GPIO Schalter",
+      "category": "switch",
+      "platform_type": "switch",
+      "bus_type": "gpio",
+      "icon": "power",
+      "description": "Einfacher GPIO-basierter Schalter (Relais, etc.)",
+      "_esphome_id": "gpio"
+    },
+    "template_switch": {
+      "name": "Template Schalter",
+      "category": "switch",
+      "platform_type": "switch",
+      "bus_type": "none",
+      "icon": "power",
+      "description": "Virtueller Schalter mit benutzerdefinierten Aktionen",
+      "_esphome_id": "template"
+    },
+
+    "thermostat": {
+      "name": "Thermostat Controller",
+      "category": "climate",
+      "platform_type": "climate",
+      "bus_type": "none",
+      "icon": "thermometer",
+      "description": "Thermostatsteuerung mit Heiz-/Kühl-Aktionen"
+    },
+    "pid": {
+      "name": "PID Controller",
+      "category": "climate",
+      "platform_type": "climate",
+      "bus_type": "none",
+      "icon": "thermometer",
+      "description": "PID-Regler für präzise Temperatursteuerung"
+    },
+    "climate_ir": {
+      "name": "IR-Klimaanlage",
+      "category": "climate",
+      "platform_type": "climate",
+      "bus_type": "gpio",
+      "icon": "fan",
+      "description": "Klimaanlage über Infrarot-Fernbedienung steuern"
+    },
+
+    "ledc": {
+      "name": "LEDC PWM Output",
+      "category": "output",
+      "platform_type": "output",
+      "bus_type": "gpio",
+      "icon": "sliders-horizontal",
+      "description": "ESP32 LEDC PWM-Ausgang (für Dimmer, Servos, etc.)"
+    },
+    "pca9685": {
+      "name": "PCA9685 16-Kanal PWM",
+      "category": "output",
+      "platform_type": "output",
+      "bus_type": "i2c",
+      "icon": "sliders-horizontal",
+      "description": "16-Kanal I²C PWM-Treiber"
+    },
+
+    "i2c": {
+      "name": "I²C Bus",
+      "category": "bus-interface",
+      "platform_type": null,
+      "bus_type": "i2c",
+      "icon": "cable",
+      "description": "I²C Bus-Konfiguration (SDA, SCL Pins)"
+    },
+    "spi": {
+      "name": "SPI Bus",
+      "category": "bus-interface",
+      "platform_type": null,
+      "bus_type": "spi",
+      "icon": "cable",
+      "description": "SPI Bus-Konfiguration (CLK, MOSI, MISO)"
+    },
+    "uart": {
+      "name": "UART Bus",
+      "category": "bus-interface",
+      "platform_type": null,
+      "bus_type": "uart",
+      "icon": "cable",
+      "description": "UART / Serial Bus-Konfiguration (TX, RX)"
+    },
+    "one_wire": {
+      "name": "1-Wire Bus",
+      "category": "bus-interface",
+      "platform_type": null,
+      "bus_type": "1wire",
+      "icon": "cable",
+      "description": "1-Wire Bus (für Dallas DS18B20 etc.)"
+    },
+    "i2s_audio": {
+      "name": "I²S Audio Bus",
+      "category": "bus-interface",
+      "platform_type": null,
+      "bus_type": "i2s",
+      "icon": "cable",
+      "description": "I²S Audio-Interface (für Lautsprecher & Mikrofone)"
+    },
+    "canbus": {
+      "name": "CAN Bus",
+      "category": "bus-interface",
+      "platform_type": null,
+      "bus_type": "can",
+      "icon": "cable",
+      "description": "CAN Bus-Kommunikation"
+    },
+
+    "pcf8574": {
+      "name": "PCF8574 I/O Expander",
+      "category": "io-expander",
+      "platform_type": null,
+      "bus_type": "i2c",
+      "icon": "git-branch",
+      "description": "8-Bit I²C GPIO-Expander"
+    },
+    "mcp23017": {
+      "name": "MCP23017 I/O Expander",
+      "category": "io-expander",
+      "platform_type": null,
+      "bus_type": "i2c",
+      "icon": "git-branch",
+      "description": "16-Bit I²C GPIO-Expander"
+    },
+
+    "wifi": {
+      "name": "WiFi",
+      "category": "network",
+      "platform_type": null,
+      "bus_type": "wifi",
+      "icon": "wifi",
+      "description": "WiFi-Verbindung konfigurieren"
+    },
+    "api": {
+      "name": "Native API (Home Assistant)",
+      "category": "network",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "home",
+      "description": "Native API für Home Assistant Integration"
+    },
+    "mqtt": {
+      "name": "MQTT",
+      "category": "network",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "cloud",
+      "description": "MQTT-Client für Publish/Subscribe-Kommunikation"
+    },
+    "ota": {
+      "name": "OTA Updates",
+      "category": "core",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "download",
+      "description": "Over-the-Air Firmware-Updates"
+    },
+    "web_server": {
+      "name": "Web Server",
+      "category": "network",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "globe",
+      "description": "Integrierter Webserver für Status & Steuerung"
+    },
+    "logger": {
+      "name": "Logger",
+      "category": "core",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "file-text",
+      "description": "Log-Ausgabe über Serial und/oder Netzwerk"
+    },
+
+    "esp32_ble_tracker": {
+      "name": "BLE Tracker",
+      "category": "bluetooth",
+      "platform_type": null,
+      "bus_type": "ble",
+      "icon": "bluetooth",
+      "description": "BLE Advertisement Scanner"
+    },
+    "bluetooth_proxy": {
+      "name": "Bluetooth Proxy",
+      "category": "bluetooth",
+      "platform_type": null,
+      "bus_type": "ble",
+      "icon": "bluetooth",
+      "description": "Bluetooth-Proxy für Home Assistant"
+    },
+
+    "remote_receiver": {
+      "name": "IR/RF Empfänger",
+      "category": "wireless",
+      "platform_type": null,
+      "bus_type": "gpio",
+      "icon": "radio",
+      "description": "Infrarot- oder RF-Signal-Empfänger"
+    },
+    "remote_transmitter": {
+      "name": "IR/RF Sender",
+      "category": "wireless",
+      "platform_type": null,
+      "bus_type": "gpio",
+      "icon": "radio",
+      "description": "Infrarot- oder RF-Signal-Sender"
+    },
+
+    "servo": {
+      "name": "Servo Motor",
+      "category": "misc",
+      "platform_type": null,
+      "bus_type": "gpio",
+      "icon": "settings",
+      "description": "PWM-gesteuerte Servo-Motoren"
+    },
+    "stepper": {
+      "name": "Schrittmotor",
+      "category": "misc",
+      "platform_type": null,
+      "bus_type": "gpio",
+      "icon": "settings",
+      "description": "Schrittmotor-Steuerung (A4988, ULN2003, etc.)"
+    },
+    "rtttl": {
+      "name": "RTTTL Buzzer",
+      "category": "misc",
+      "platform_type": null,
+      "bus_type": "gpio",
+      "icon": "volume-2",
+      "description": "Piezo-Buzzer mit RTTTL-Melodien"
+    },
+    "status_led": {
+      "name": "Status LED",
+      "category": "misc",
+      "platform_type": null,
+      "bus_type": "gpio",
+      "icon": "lightbulb",
+      "description": "LED zeigt ESPHome-Gerätestatus an"
+    },
+
+    "gt911": {
+      "name": "GT911 Touchscreen",
+      "category": "display",
+      "platform_type": "touchscreen",
+      "bus_type": "i2c",
+      "icon": "hand",
+      "description": "Kapazitiver Touch-Controller (I²C)"
+    },
+    "cst816": {
+      "name": "CST816 Touchscreen",
+      "category": "display",
+      "platform_type": "touchscreen",
+      "bus_type": "i2c",
+      "icon": "hand",
+      "description": "Kapazitiver Touch-Controller für kleine Displays"
+    },
+    "ft5x06": {
+      "name": "FT5x06 Touchscreen",
+      "category": "display",
+      "platform_type": "touchscreen",
+      "bus_type": "i2c",
+      "icon": "hand",
+      "description": "FocalTech kapazitiver Touch-Controller"
+    },
+
+    "sntp": {
+      "name": "SNTP Zeitsynchronisation",
+      "category": "time",
+      "platform_type": "time",
+      "bus_type": "none",
+      "icon": "clock",
+      "description": "Uhrzeit über NTP-Server synchronisieren"
+    },
+    "ds1307": {
+      "name": "DS1307 RTC",
+      "category": "time",
+      "platform_type": "time",
+      "bus_type": "i2c",
+      "icon": "clock",
+      "description": "Echtzeituhr-Modul über I²C"
+    },
+
+    "speed": {
+      "name": "PWM Lüfter",
+      "category": "fan",
+      "platform_type": "fan",
+      "bus_type": "none",
+      "icon": "fan",
+      "description": "Geschwindigkeitsgeregelter Lüfter über PWM-Output"
+    },
+    "tuya": {
+      "name": "Tuya MCU",
+      "category": "misc",
+      "platform_type": null,
+      "bus_type": "uart",
+      "icon": "cpu",
+      "description": "Tuya/Smart-Life MCU Kommunikation über Serial"
+    },
+
+    "esp32_camera": {
+      "name": "ESP32 Kamera",
+      "category": "misc",
+      "platform_type": null,
+      "bus_type": "gpio",
+      "icon": "camera",
+      "description": "ESP32-CAM Kamera-Modul"
+    },
+    "voice_assistant": {
+      "name": "Voice Assistant",
+      "category": "media-audio",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "mic",
+      "description": "Home Assistant Voice-Assist-Pipeline"
+    },
+    "micro_wake_word": {
+      "name": "Micro Wake Word",
+      "category": "media-audio",
+      "platform_type": null,
+      "bus_type": "none",
+      "icon": "mic",
+      "description": "Lokale Wakeword-Erkennung auf dem ESP"
+    },
+    "i2s_audio_speaker": {
+      "name": "I²S Lautsprecher",
+      "category": "media-audio",
+      "platform_type": "speaker",
+      "bus_type": "i2s",
+      "icon": "volume-2",
+      "description": "Lautsprecher über I²S Audio-Interface",
+      "_esphome_id": "i2s_audio"
+    },
+    "i2s_audio_microphone": {
+      "name": "I²S Mikrofon",
+      "category": "media-audio",
+      "platform_type": "microphone",
+      "bus_type": "i2s",
+      "icon": "mic",
+      "description": "Mikrofon über I²S Audio-Interface",
+      "_esphome_id": "i2s_audio"
+    }
+  }
+}

@@ -210,23 +210,29 @@ class Board(BaseModel):
 
 class BoardSummary(BaseModel):
     """Kurzzusammenfassung für Board-Listen (ohne vollständige GPIO-Matrix)."""
-    id:            str
-    name:          str
-    aliases:       list[str]
-    manufacturer:  Optional[str]
-    category:      BoardCategory
-    esphome_board: str
-    chip_family:   ChipFamily
-    chip_variant:  str
-    ram_kb:        int
-    flash_mb:      int
-    psram_mb:      Optional[int]
-    gpio_count:    int
+    id:              str
+    name:            str
+    aliases:         list[str]
+    manufacturer:    Optional[str]
+    category:        BoardCategory
+    esphome_board:   str
+    chip_family:     ChipFamily
+    chip_model:      Optional[str]
+    chip_variant:    str
+    cpu_mhz:         int
+    ram_kb:          int
+    flash_mb:        int
+    psram_mb:        Optional[int]
+    wifi:            bool
+    bluetooth:       Optional[str]
+    usb_native:      bool
+    gpio_count:      int
     free_gpio_count: int
-    has_display:   bool
-    has_touch:     bool
-    has_speaker:   bool
-    image_url:     Optional[str]
+    has_display:     bool
+    has_touch:       bool
+    has_adc:         bool
+    has_speaker:     bool
+    image_url:       Optional[str]
 
     @classmethod
     def from_board(cls, b: Board) -> "BoardSummary":
@@ -235,13 +241,20 @@ class BoardSummary(BaseModel):
             id=b.id, name=b.name, aliases=b.aliases,
             manufacturer=b.manufacturer, category=b.category,
             esphome_board=b.esphome_board,
-            chip_family=b.chip.family, chip_variant=b.chip.variant,
+            chip_family=b.chip.family,
+            chip_model=b.chip.model,
+            chip_variant=b.chip.variant,
+            cpu_mhz=b.chip.cpu_mhz,
             ram_kb=b.chip.ram_kb, flash_mb=b.chip.flash_mb,
             psram_mb=b.chip.psram_mb,
+            wifi=b.chip.wifi,
+            bluetooth=b.chip.bluetooth,
+            usb_native=b.chip.usb_native,
             gpio_count=len(b.gpios),
             free_gpio_count=len(b.free_gpios()),
             has_display=ComponentType.DISPLAY in types,
             has_touch=ComponentType.TOUCHSCREEN in types,
+            has_adc=any(g.adc is not None for g in b.gpios),
             has_speaker=ComponentType.MEDIA_PLAYER in types,
             image_url=b.image_url,
         )

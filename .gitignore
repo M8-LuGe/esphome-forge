@@ -28,6 +28,10 @@ Thumbs.db
 
 # ESPHome (wenn lokal getestet)
 .esphome/
+
+# Runtime caches & data (regenerated at startup)
+esphome-forge/backend/components/cache/
+esphome-forge/backend/projects/data/
 *.compiled/
 
 # Secrets

@@ -103,10 +103,12 @@ export interface BoardSummary {
   id:              string
   name:            string
   aliases:         string[]
-  manufacturer:    string
+  manufacturer:    string | null
   category:        string
+  esphome_board:   string
   chip_family:     ChipFamily
-  chip_model:      string
+  chip_model:      string | null
+  chip_variant:    string
   cpu_mhz:         number
   ram_kb:          number
   flash_mb:        number
@@ -119,6 +121,7 @@ export interface BoardSummary {
   has_display:     boolean
   has_touch:       boolean
   has_adc:         boolean
+  has_speaker:     boolean
   image_url:       string | null
 }
 

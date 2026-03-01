@@ -3,7 +3,7 @@ name: "ESPHome Forge"
 version: "0.1.0"
 slug: "esphome-forge"
 description: "Visueller ESPHome-Konfigurator – Board → GPIO → Komponenten → YAML"
-url: "https://github.com/DEIN_USER/esphome-forge"
+url: "https://github.com/M8-LuGe/esphome-forge"
 arch:
   - aarch64   # Raspberry Pi 4/5 (HA OS Standard)
   - amd64     # x86 Server / VM
@@ -23,7 +23,7 @@ hassio_role: default
 # Dateisystem-Mounts
 map:
   - share:rw    # /share/esphome-forge/ – generierte YAMLs + custom boards
-  - config:ro   # /config/esphome/ – bestehende ESPHome YAMLs lesen (optional)
+  - config:rw   # /config/esphome/ – ESPHome YAMLs lesen + schreiben
 
 # Keine exponierten Optionen in der HA-UI (alles in der App selbst konfigurieren)
 options: {}

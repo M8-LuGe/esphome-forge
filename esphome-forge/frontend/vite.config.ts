@@ -4,6 +4,8 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  // Relativer base-path → Assets funktionieren unter jedem Ingress-Prefix
+  base: './',
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },
   },
