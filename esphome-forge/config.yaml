@@ -1,6 +1,6 @@
 ---
 name: "ESPHome Forge"
-version: "0.1.1"
+version: "0.1.2"
 slug: "esphome-forge"
 description: "Visueller ESPHome-Konfigurator – Board → GPIO → Komponenten → YAML"
 url: "https://github.com/M8-LuGe/esphome-forge"

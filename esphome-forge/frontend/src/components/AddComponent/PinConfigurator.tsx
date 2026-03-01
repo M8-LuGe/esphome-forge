@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   X,
   Check,
-  AlertTriangle,
   ExternalLink,
   Loader2,
   Cpu,
@@ -29,10 +28,13 @@ function gpioMatchesModes(gpio: Gpio, modes: string[]): boolean {
   if (!modes || modes.length === 0) return true
   for (const mode of modes) {
     switch (mode) {
-      case 'input':  if (!gpio.input)  return false; break
-      case 'output': if (!gpio.output) return false; break
-      case 'pullup': if (!gpio.pu)     return false; break
-      case 'pulldown': if (!gpio.pd)   return false; break
+      case 'input':    if (!gpio.input)   return false; break
+      case 'output':   if (!gpio.output)  return false; break
+      case 'pullup':   if (!gpio.pu)      return false; break
+      case 'pulldown': if (!gpio.pd)      return false; break
+      case 'adc':      if (!gpio.adc)     return false; break
+      case 'pwm':      if (!gpio.pwm)     return false; break
+      case 'touch':    if (!gpio.touch)   return false; break
     }
   }
   return true
@@ -98,6 +100,74 @@ export function PinConfigurator({ component, onConfirm, onCancel }: PinConfigura
 
   // GPIOs aus dem Board
   const gpios = selectedBoard?.gpios ?? []
+
+  // Bereits zugewiesene Bus-Pins (SDA/SCL/CLK/MOSI etc.) aus dem Projekt ermitteln
+  // → I²C/SPI Komponenten teilen sich dieselben Bus-Pins
+  const existingBusPins = useMemo(() => {
+    const busPinKeys = ['sda', 'scl', 'clk_pin', 'mosi_pin', 'miso_pin']
+    const pins: Record<string, number> = {}
+    for (const c of components) {
+      for (const key of busPinKeys) {
+        if (c.pins[key] !== undefined && !(key in pins)) {
+          pins[key] = c.pins[key]
+        }
+      }
+    }
+    return pins
+  }, [components])
+
+  // Auto-Assign beim ersten Laden der Detail-Daten
+  const autoAssignedRef = useRef(false)
+  useEffect(() => {
+    if (!detail || autoAssignedRef.current || pinFields.length === 0) return
+    autoAssignedRef.current = true
+
+    // GPIOs sortieren: Nicht-Strapping-Pins zuerst, dann Strapping-Pins (letzter Ausweg)
+    const sorted = [...gpios].sort((a, b) => {
+      const aStrap = a.strapping ? 1 : 0
+      const bStrap = b.strapping ? 1 : 0
+      return aStrap - bStrap
+    })
+
+    const auto: Record<string, number> = {}
+    const localUsed = new Set<number>(usedPins)
+
+    for (const field of pinFields) {
+      if (!field.required) continue
+
+      // Bus-Pin mit existierender Zuweisung wiederverwenden (I²C/SPI geteilt)
+      if (field.key in existingBusPins) {
+        auto[field.key] = existingBusPins[field.key]
+        // Kein localUsed.add – geteilter Pin darf mehrfach vorkommen
+        continue
+      }
+
+      const modes = field.pin_modes ?? []
+      const candidate = sorted.find(
+        (g) => gpioMatchesModes(g, modes) && !gpioIsUsed(g, localUsed),
+      )
+      if (candidate) {
+        auto[field.key] = candidate.num
+        localUsed.add(candidate.num) // Für nachfolgende Felder reservieren
+      }
+    }
+
+    if (Object.keys(auto).length > 0) {
+      setPinAssignments(auto)
+    }
+  }, [detail]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Config-Defaults beim Laden initialisieren
+  useEffect(() => {
+    if (!detail) return
+    const defaults: Record<string, unknown> = {}
+    for (const field of detail.config_fields) {
+      if (field.default !== undefined && field.default !== null && field.default !== '') {
+        defaults[field.key] = field.type === 'integer' ? Number(field.default) : field.default
+      }
+    }
+    setConfigValues(defaults)
+  }, [detail])
 
   // Validierung: alle Required-Pin-Felder zugewiesen?
   const allRequiredPinsSet = pinFields
@@ -196,17 +266,6 @@ export function PinConfigurator({ component, onConfirm, onCancel }: PinConfigura
             </>
           )}
 
-          {/* Bus-Hinweis */}
-          {component.bus_type && component.bus_type !== 'gpio' && component.bus_type !== 'none' && (
-            <div className="flex items-start gap-2 rounded-lg bg-blue-500/10 border border-blue-500/20 px-3 py-2.5">
-              <AlertTriangle className="h-4 w-4 text-blue-400 mt-0.5 shrink-0" />
-              <p className="text-xs text-blue-300">
-                Diese Komponente nutzt den <strong className="uppercase">{component.bus_type}</strong>-Bus.
-                Die Bus-Pins werden automatisch in der YAML-Konfiguration eingerichtet.
-              </p>
-            </div>
-          )}
-
           {/* Doku-Link */}
           {component.doc_url && (
             <a
@@ -295,8 +354,9 @@ function PinFieldRow({
     <div className="space-y-1">
       <div className="flex items-center gap-2">
         <label className="text-xs font-medium text-slate-300">
-          {field.key}
+          {field.description ?? field.key}
           {field.required && <span className="text-red-400 ml-0.5">*</span>}
+          <span className="ml-1.5 font-mono text-[9px] text-slate-600">{field.key}</span>
         </label>
         {modes.length > 0 && (
           <span className="text-[10px] text-slate-600">
@@ -356,7 +416,7 @@ function ConfigFieldRow({
     return (
       <div className="space-y-1">
         <label className="text-xs font-medium text-slate-300">
-          {field.key}
+          {field.description ?? field.key}
           {field.required && <span className="text-red-400 ml-0.5">*</span>}
         </label>
         <select
@@ -384,7 +444,7 @@ function ConfigFieldRow({
           onChange={(e) => onChange(e.target.checked)}
           className="h-4 w-4 rounded border-border bg-surface-raised text-forge-600 focus:ring-forge-500"
         />
-        <label className="text-xs font-medium text-slate-300">{field.key}</label>
+        <label className="text-xs font-medium text-slate-300">{field.description ?? field.key}</label>
       </div>
     )
   }
@@ -392,7 +452,7 @@ function ConfigFieldRow({
   return (
     <div className="space-y-1">
       <label className="text-xs font-medium text-slate-300">
-        {field.key}
+        {field.description ?? field.key}
         {field.required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
       <input

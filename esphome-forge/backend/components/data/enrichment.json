@@ -41,7 +41,14 @@
       "bus_type": "gpio",
       "icon": "thermometer",
       "description": "Digitaler Temperatur- & Luftfeuchtigkeitssensor (DHT11, DHT22, AM2302)",
-      "sub_sensors": ["temperature", "humidity"]
+      "sub_sensors": ["temperature", "humidity"],
+      "pin_roles": {
+        "pin": {"label": "Daten-Pin", "modes": ["input","output"], "required": true}
+      },
+      "extra_config_fields": [
+        {"key": "model", "type": "enum", "required": true, "label": "Sensor-Modell",
+         "default": "DHT22", "enum_values": ["DHT11", "DHT22", "DHT21", "AM2302"]}
+      ]
     },
     "bme280": {
       "name": "BME280 Temperatur, Feuchtigkeit & Druck",
@@ -50,7 +57,11 @@
       "bus_type": "i2c",
       "icon": "thermometer",
       "description": "Präziser I²C-Sensor für Temperatur, Luftfeuchtigkeit und Luftdruck",
-      "sub_sensors": ["temperature", "humidity", "pressure"]
+      "sub_sensors": ["temperature", "humidity", "pressure"],
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "bme680": {
       "name": "BME680 Umwelt-Sensor",
@@ -59,7 +70,11 @@
       "bus_type": "i2c",
       "icon": "thermometer",
       "description": "I²C-Sensor für Temperatur, Feuchtigkeit, Druck und Gasresistenz (VOC)",
-      "sub_sensors": ["temperature", "humidity", "pressure", "gas_resistance"]
+      "sub_sensors": ["temperature", "humidity", "pressure", "gas_resistance"],
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "bmp280": {
       "name": "BMP280 Temperatur & Druck",
@@ -68,7 +83,11 @@
       "bus_type": "i2c",
       "icon": "thermometer",
       "description": "Barometrischer Drucksensor mit Temperatur",
-      "sub_sensors": ["temperature", "pressure"]
+      "sub_sensors": ["temperature", "pressure"],
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "sht3xd": {
       "name": "SHT3x-D Temperatur & Luftfeuchtigkeit",
@@ -77,7 +96,11 @@
       "bus_type": "i2c",
       "icon": "thermometer",
       "description": "Hochgenauer I²C Temperatur- & Luftfeuchtigkeitssensor",
-      "sub_sensors": ["temperature", "humidity"]
+      "sub_sensors": ["temperature", "humidity"],
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "sht4x": {
       "name": "SHT4x Temperatur & Luftfeuchtigkeit",
@@ -86,7 +109,11 @@
       "bus_type": "i2c",
       "icon": "thermometer",
       "description": "Neue Generation Sensirion Temperatur & Feuchte-Sensor",
-      "sub_sensors": ["temperature", "humidity"]
+      "sub_sensors": ["temperature", "humidity"],
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "aht10": {
       "name": "AHT10/20/21 Temperatur & Luftfeuchtigkeit",
@@ -94,7 +121,11 @@
       "platform_type": "sensor",
       "bus_type": "i2c",
       "icon": "thermometer",
-      "description": "Günstiger I²C Temperatur- & Luftfeuchtigkeitssensor"
+      "description": "Günstiger I²C Temperatur- & Luftfeuchtigkeitssensor",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "dallas_temp": {
       "name": "Dallas DS18B20 Temperatur",
@@ -102,7 +133,10 @@
       "platform_type": "sensor",
       "bus_type": "1wire",
       "icon": "thermometer",
-      "description": "1-Wire Temperatursensor (DS18B20, DS18S20)"
+      "description": "1-Wire Temperatursensor (DS18B20, DS18S20)",
+      "pin_roles": {
+        "pin": {"label": "1-Wire Datenleitung", "modes": ["input","output"], "required": true}
+      }
     },
     "bh1750": {
       "name": "BH1750 Lichtsensor",
@@ -110,7 +144,11 @@
       "platform_type": "sensor",
       "bus_type": "i2c",
       "icon": "sun",
-      "description": "Digitaler Umgebungslichtsensor (Lux)"
+      "description": "Digitaler Umgebungslichtsensor (Lux)",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "tsl2561": {
       "name": "TSL2561 Lichtsensor",
@@ -118,7 +156,11 @@
       "platform_type": "sensor",
       "bus_type": "i2c",
       "icon": "sun",
-      "description": "Digitaler Lichtsensor für sichtbares und Infrarot-Licht"
+      "description": "Digitaler Lichtsensor für sichtbares und Infrarot-Licht",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "adc": {
       "name": "ADC (Analoger Eingang)",
@@ -126,7 +168,10 @@
       "platform_type": "sensor",
       "bus_type": "gpio",
       "icon": "activity",
-      "description": "Interner ADC des ESP – liest analoge Spannungswerte"
+      "description": "Interner ADC des ESP – liest analoge Spannungswerte",
+      "pin_roles": {
+        "pin": {"label": "ADC Eingangs-Pin", "modes": ["input","adc"], "required": true}
+      }
     },
     "ultrasonic": {
       "name": "Ultraschall-Distanzsensor",
@@ -134,7 +179,11 @@
       "platform_type": "sensor",
       "bus_type": "gpio",
       "icon": "ruler",
-      "description": "HC-SR04 und kompatible Ultraschall-Sensoren"
+      "description": "HC-SR04 und kompatible Ultraschall-Sensoren",
+      "pin_roles": {
+        "trigger_pin": {"label": "Trigger (TRIG)", "modes": ["output"], "required": true},
+        "echo_pin":    {"label": "Echo (ECHO)",    "modes": ["input"],  "required": true}
+      }
     },
     "vl53l0x": {
       "name": "VL53L0X Laser-Distanzsensor",
@@ -142,7 +191,11 @@
       "platform_type": "sensor",
       "bus_type": "i2c",
       "icon": "ruler",
-      "description": "Time-of-Flight Laser-Entfernungsmesser"
+      "description": "Time-of-Flight Laser-Entfernungsmesser",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "ld2410": {
       "name": "LD2410 mmWave Präsenzsensor",
@@ -150,7 +203,12 @@
       "platform_type": "sensor",
       "bus_type": "uart",
       "icon": "radar",
-      "description": "24GHz Radar-Sensor für Bewegungs- und Präsenzerkennung"
+      "description": "24GHz Radar-Sensor für Bewegungs- und Präsenzerkennung",
+      "uart_baud": 256000,
+      "pin_roles": {
+        "tx_pin": {"label": "TX → LD2410 RX", "modes": ["output"], "required": true},
+        "rx_pin": {"label": "RX ← LD2410 TX", "modes": ["input"],  "required": true}
+      }
     },
     "ld2412": {
       "name": "LD2412 mmWave Präsenzsensor",
@@ -158,7 +216,12 @@
       "platform_type": "sensor",
       "bus_type": "uart",
       "icon": "radar",
-      "description": "24GHz Radar-Sensor für Bewegungs- und Präsenzerkennung (verbessert)"
+      "description": "24GHz Radar-Sensor für Bewegungs- und Präsenzerkennung (verbessert)",
+      "uart_baud": 115200,
+      "pin_roles": {
+        "tx_pin": {"label": "TX → LD2412 RX", "modes": ["output"], "required": true},
+        "rx_pin": {"label": "RX ← LD2412 TX", "modes": ["input"],  "required": true}
+      }
     },
     "ccs811": {
       "name": "CCS811 CO₂ & VOC Sensor",
@@ -166,7 +229,11 @@
       "platform_type": "sensor",
       "bus_type": "i2c",
       "icon": "wind",
-      "description": "CO₂- und VOC-Sensor für Luftqualitätsüberwachung"
+      "description": "CO₂- und VOC-Sensor für Luftqualitätsüberwachung",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "sgp4x": {
       "name": "SGP4x VOC & NOx Sensor",
@@ -174,7 +241,11 @@
       "platform_type": "sensor",
       "bus_type": "i2c",
       "icon": "wind",
-      "description": "Sensirion Luftqualitätssensor (VOC-Index, NOx-Index)"
+      "description": "Sensirion Luftqualitätssensor (VOC-Index, NOx-Index)",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
     "pmsx003": {
       "name": "PMS5003/7003 Feinstaub-Sensor",
@@ -182,7 +253,12 @@
       "platform_type": "sensor",
       "bus_type": "uart",
       "icon": "wind",
-      "description": "Plantower Feinstaub-Sensor (PM1.0, PM2.5, PM10)"
+      "description": "Plantower Feinstaub-Sensor (PM1.0, PM2.5, PM10)",
+      "uart_baud": 9600,
+      "pin_roles": {
+        "tx_pin": {"label": "TX → PMS RX", "modes": ["output"], "required": true},
+        "rx_pin": {"label": "RX ← PMS TX", "modes": ["input"],  "required": true}
+      }
     },
     "hlw8012": {
       "name": "HLW8012 Strom/Spannung/Leistung",
@@ -190,7 +266,12 @@
       "platform_type": "sensor",
       "bus_type": "gpio",
       "icon": "zap",
-      "description": "Leistungsmessung (z.B. in Sonoff POW)"
+      "description": "Leistungsmessung (z.B. in Sonoff POW)",
+      "pin_roles": {
+        "sel_pin": {"label": "SEL (Messmodus)", "modes": ["output"], "required": true},
+        "cf_pin":  {"label": "CF (Leistung)",   "modes": ["input"],  "required": true},
+        "cf1_pin": {"label": "CF1 (Strom/U)",   "modes": ["input"],  "required": true}
+      }
     },
     "ade7953": {
       "name": "ADE7953 Leistungsmessung",
@@ -198,7 +279,12 @@
       "platform_type": "sensor",
       "bus_type": "i2c",
       "icon": "zap",
-      "description": "Hochpräziser Leistungsmess-IC (z.B. Shelly)"
+      "description": "Hochpräziser Leistungsmess-IC (z.B. Shelly)",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true},
+        "irq_pin": {"label": "IRQ (optional)", "modes": ["input"], "required": false}
+      }
     },
     "hx711": {
       "name": "HX711 Wägezelle",
@@ -206,7 +292,11 @@
       "platform_type": "sensor",
       "bus_type": "gpio",
       "icon": "gauge",
-      "description": "24-Bit ADC für Wägezellen und Kraftmessung"
+      "description": "24-Bit ADC für Wägezellen und Kraftmessung",
+      "pin_roles": {
+        "dout_pin": {"label": "DOUT (Daten)", "modes": ["input"],  "required": true},
+        "clk_pin":  {"label": "SCK (Takt)",   "modes": ["output"], "required": true}
+      }
     },
     "pulse_counter": {
       "name": "Puls-Zähler",
@@ -214,7 +304,10 @@
       "platform_type": "sensor",
       "bus_type": "gpio",
       "icon": "activity",
-      "description": "Zählt Pulse an einem GPIO (z.B. für Strom-/Wasserzähler)"
+      "description": "Zählt Pulse an einem GPIO (z.B. für Strom-/Wasserzähler)",
+      "pin_roles": {
+        "pin": {"label": "Eingangs-Pin", "modes": ["input"], "required": true}
+      }
     },
     "wifi_signal": {
       "name": "WiFi-Signalstärke",
@@ -231,7 +324,10 @@
       "platform_type": "binary_sensor",
       "bus_type": "gpio",
       "icon": "toggle-left",
-      "description": "Einfacher digitaler Eingang (Taster, Reed-Kontakt, etc.)"
+      "description": "Einfacher digitaler Eingang (Taster, Reed-Kontakt, etc.)",
+      "pin_roles": {
+        "pin": {"label": "Eingangs-Pin", "modes": ["input"], "required": true}
+      }
     },
     "esp32_touch": {
       "name": "ESP32 Touch Pad",
@@ -239,7 +335,10 @@
       "platform_type": "binary_sensor",
       "bus_type": "gpio",
       "icon": "hand",
-      "description": "Kapazitiver Touch-Sensor der ESP32 Touch-Pins"
+      "description": "Kapazitiver Touch-Sensor der ESP32 Touch-Pins",
+      "pin_roles": {
+        "pin": {"label": "Touch-Pin", "modes": ["touch"], "required": true}
+      }
     },
     "pn532": {
       "name": "PN532 NFC/RFID Leser",
@@ -247,7 +346,11 @@
       "platform_type": "binary_sensor",
       "bus_type": "i2c",
       "icon": "nfc",
-      "description": "NFC/RFID Tag-Reader (I²C oder SPI)"
+      "description": "NFC/RFID Tag-Reader (I²C oder SPI)",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      }
     },
 
     "ili9xxx": {
@@ -256,7 +359,21 @@
       "platform_type": "display",
       "bus_type": "spi",
       "icon": "monitor",
-      "description": "TFT-Display-Controller (ILI9341, ILI9342, ILI9481, ILI9488, ST7789, etc.)"
+      "description": "TFT-Display-Controller (ILI9341, ILI9342, ILI9481, ILI9488, ST7789, etc.)",
+      "pin_roles": {
+        "clk_pin":        {"label": "CLK (SPI Takt)",      "modes": ["output"], "required": true},
+        "mosi_pin":       {"label": "MOSI (SPI Daten)",    "modes": ["output"], "required": true},
+        "miso_pin":       {"label": "MISO (optional)",     "modes": ["input"],  "required": false},
+        "cs_pin":         {"label": "CS (Chip Select)",    "modes": ["output"], "required": true},
+        "dc_pin":         {"label": "DC (Daten/Befehl)",   "modes": ["output"], "required": true},
+        "reset_pin":      {"label": "Reset (optional)",    "modes": ["output"], "required": false},
+        "backlight_pin":  {"label": "Backlight (optional)","modes": ["output"], "required": false}
+      },
+      "extra_config_fields": [
+        {"key": "model", "type": "enum", "required": true, "label": "Display-Modell",
+         "default": "ILI9341",
+         "enum_values": ["ILI9341","ILI9342","ILI9481","ILI9488","ST7789V","ST7796","GC9A01A","S3BOX","S3BOX_LITE"]}
+      ]
     },
     "ssd1306_i2c": {
       "name": "SSD1306 OLED (I²C)",
@@ -264,7 +381,16 @@
       "platform_type": "display",
       "bus_type": "i2c",
       "icon": "monitor",
-      "description": "0.96\" / 1.3\" OLED-Display über I²C"
+      "description": "0.96\" / 1.3\" OLED-Display über I²C",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)", "modes": ["output"], "required": true}
+      },
+      "extra_config_fields": [
+        {"key": "model", "type": "enum", "required": true, "label": "Display-Modell",
+         "default": "SSD1306_128X64",
+         "enum_values": ["SSD1306_128X64","SSD1306_128X32","SH1106_128X64","SH1107_128X128"]}
+      ]
     },
     "ssd1306_spi": {
       "name": "SSD1306 OLED (SPI)",
@@ -272,7 +398,19 @@
       "platform_type": "display",
       "bus_type": "spi",
       "icon": "monitor",
-      "description": "SSD1306 OLED-Display über SPI"
+      "description": "SSD1306 OLED-Display über SPI",
+      "pin_roles": {
+        "clk_pin":  {"label": "CLK (SPI Takt)",   "modes": ["output"], "required": true},
+        "mosi_pin": {"label": "MOSI (SPI Daten)", "modes": ["output"], "required": true},
+        "cs_pin":   {"label": "CS (Chip Select)", "modes": ["output"], "required": true},
+        "dc_pin":   {"label": "DC (Daten/Befehl)","modes": ["output"], "required": true},
+        "reset_pin":{"label": "Reset (optional)", "modes": ["output"], "required": false}
+      },
+      "extra_config_fields": [
+        {"key": "model", "type": "enum", "required": true, "label": "Display-Modell",
+         "default": "SSD1306_128X64",
+         "enum_values": ["SSD1306_128X64","SSD1306_128X32","SH1106_128X64"]}
+      ]
     },
     "st7789v": {
       "name": "ST7789V TFT Display",
@@ -280,7 +418,14 @@
       "platform_type": "display",
       "bus_type": "spi",
       "icon": "monitor",
-      "description": "TFT-Display mit ST7789V Controller"
+      "description": "TFT-Display mit ST7789V Controller",
+      "pin_roles": {
+        "clk_pin":   {"label": "CLK (SPI Takt)",    "modes": ["output"], "required": true},
+        "mosi_pin":  {"label": "MOSI (SPI Daten)",  "modes": ["output"], "required": true},
+        "cs_pin":    {"label": "CS (Chip Select)",  "modes": ["output"], "required": true},
+        "dc_pin":    {"label": "DC (Daten/Befehl)", "modes": ["output"], "required": true},
+        "reset_pin": {"label": "Reset (optional)",  "modes": ["output"], "required": false}
+      }
     },
     "nextion": {
       "name": "Nextion Touch Display",
@@ -288,7 +433,12 @@
       "platform_type": "display",
       "bus_type": "uart",
       "icon": "monitor",
-      "description": "Nextion HMI Touch-Display über UART"
+      "description": "Nextion HMI Touch-Display über UART",
+      "uart_baud": 9600,
+      "pin_roles": {
+        "tx_pin": {"label": "TX → Nextion RX", "modes": ["output"], "required": true},
+        "rx_pin": {"label": "RX ← Nextion TX", "modes": ["input"],  "required": true}
+      }
     },
     "lvgl": {
       "name": "LVGL Graphics",
@@ -305,7 +455,17 @@
       "platform_type": "light",
       "bus_type": "gpio",
       "icon": "lightbulb",
-      "description": "Adressierbare LED-Streifen (WS2812, SK6812, etc.) über RMT"
+      "description": "Adressierbare LED-Streifen (WS2812, SK6812, etc.) über RMT",
+      "pin_roles": {
+        "pin": {"label": "Daten-Pin (DATA)", "modes": ["output"], "required": true}
+      },
+      "extra_config_fields": [
+        {"key": "num_leds",  "type": "integer", "required": true,  "label": "Anzahl LEDs",  "default": "30"},
+        {"key": "rgb_order", "type": "enum",    "required": true,  "label": "Farbreihenfolge",
+         "default": "GRB", "enum_values": ["RGB","GRB","BGR","GRBW","RGBW"]},
+        {"key": "chipset",   "type": "enum",    "required": false, "label": "LED-Typ",
+         "default": "WS2812", "enum_values": ["WS2812","WS2812B","WS2811","SK6812","APA106"]}
+      ]
     },
     "neopixelbus": {
       "name": "NeoPixelBus LED Strip",
@@ -313,7 +473,15 @@
       "platform_type": "light",
       "bus_type": "gpio",
       "icon": "lightbulb",
-      "description": "NeoPixelBus-Bibliothek für addressierbare LEDs"
+      "description": "NeoPixelBus-Bibliothek für addressierbare LEDs",
+      "pin_roles": {
+        "pin": {"label": "Daten-Pin (DATA)", "modes": ["output"], "required": true}
+      },
+      "extra_config_fields": [
+        {"key": "num_leds", "type": "integer", "required": true, "label": "Anzahl LEDs", "default": "30"},
+        {"key": "type",     "type": "enum",    "required": true, "label": "LED-Typ",
+         "default": "GRB", "enum_values": ["GRB","RGB","GRBW","RGBW","BRG"]}
+      ]
     },
     "binary": {
       "name": "Binäres Licht",
@@ -355,7 +523,10 @@
       "bus_type": "gpio",
       "icon": "power",
       "description": "Einfacher GPIO-basierter Schalter (Relais, etc.)",
-      "_esphome_id": "gpio"
+      "_esphome_id": "gpio",
+      "pin_roles": {
+        "pin": {"label": "Ausgangs-Pin", "modes": ["output"], "required": true}
+      }
     },
     "template_switch": {
       "name": "Template Schalter",
@@ -389,7 +560,10 @@
       "platform_type": "climate",
       "bus_type": "gpio",
       "icon": "fan",
-      "description": "Klimaanlage über Infrarot-Fernbedienung steuern"
+      "description": "Klimaanlage über Infrarot-Fernbedienung steuern",
+      "pin_roles": {
+        "pin": {"label": "IR LED Sende-Pin", "modes": ["output"], "required": true}
+      }
     },
 
     "ledc": {
@@ -398,7 +572,10 @@
       "platform_type": "output",
       "bus_type": "gpio",
       "icon": "sliders-horizontal",
-      "description": "ESP32 LEDC PWM-Ausgang (für Dimmer, Servos, etc.)"
+      "description": "ESP32 LEDC PWM-Ausgang (für Dimmer, Servos, etc.)",
+      "pin_roles": {
+        "pin": {"label": "PWM Ausgangs-Pin", "modes": ["output","pwm"], "required": true}
+      }
     },
     "pca9685": {
       "name": "PCA9685 16-Kanal PWM",
@@ -406,7 +583,11 @@
       "platform_type": "output",
       "bus_type": "i2c",
       "icon": "sliders-horizontal",
-      "description": "16-Kanal I²C PWM-Treiber"
+      "description": "16-Kanal I²C PWM-Treiber",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)",  "modes": ["output"],         "required": true}
+      }
     },
 
     "i2c": {
@@ -415,7 +596,11 @@
       "platform_type": null,
       "bus_type": "i2c",
       "icon": "cable",
-      "description": "I²C Bus-Konfiguration (SDA, SCL Pins)"
+      "description": "I²C Bus-Konfiguration (SDA, SCL Pins)",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)",  "modes": ["output"],         "required": true}
+      }
     },
     "spi": {
       "name": "SPI Bus",
@@ -423,7 +608,12 @@
       "platform_type": null,
       "bus_type": "spi",
       "icon": "cable",
-      "description": "SPI Bus-Konfiguration (CLK, MOSI, MISO)"
+      "description": "SPI Bus-Konfiguration (CLK, MOSI, MISO)",
+      "pin_roles": {
+        "clk_pin":  {"label": "CLK (Takt)",  "modes": ["output"], "required": true},
+        "mosi_pin": {"label": "MOSI (Daten)","modes": ["output"], "required": true},
+        "miso_pin": {"label": "MISO (Lesen)","modes": ["input"],  "required": false}
+      }
     },
     "uart": {
       "name": "UART Bus",
@@ -431,7 +621,11 @@
       "platform_type": null,
       "bus_type": "uart",
       "icon": "cable",
-      "description": "UART / Serial Bus-Konfiguration (TX, RX)"
+      "description": "UART / Serial Bus-Konfiguration (TX, RX)",
+      "pin_roles": {
+        "tx_pin": {"label": "TX (Senden)",   "modes": ["output"], "required": true},
+        "rx_pin": {"label": "RX (Empfangen)","modes": ["input"],  "required": true}
+      }
     },
     "one_wire": {
       "name": "1-Wire Bus",
@@ -439,7 +633,10 @@
       "platform_type": null,
       "bus_type": "1wire",
       "icon": "cable",
-      "description": "1-Wire Bus (für Dallas DS18B20 etc.)"
+      "description": "1-Wire Bus (für Dallas DS18B20 etc.)",
+      "pin_roles": {
+        "pin": {"label": "1-Wire Datenleitung", "modes": ["input","output"], "required": true}
+      }
     },
     "i2s_audio": {
       "name": "I²S Audio Bus",
@@ -447,7 +644,11 @@
       "platform_type": null,
       "bus_type": "i2s",
       "icon": "cable",
-      "description": "I²S Audio-Interface (für Lautsprecher & Mikrofone)"
+      "description": "I²S Audio-Interface (für Lautsprecher & Mikrofone)",
+      "pin_roles": {
+        "bclk_pin":  {"label": "BCLK (Bit-Clock)", "modes": ["output"], "required": true},
+        "lrclk_pin": {"label": "LRCLK / WS",       "modes": ["output"], "required": true}
+      }
     },
     "canbus": {
       "name": "CAN Bus",
@@ -464,7 +665,11 @@
       "platform_type": null,
       "bus_type": "i2c",
       "icon": "git-branch",
-      "description": "8-Bit I²C GPIO-Expander"
+      "description": "8-Bit I²C GPIO-Expander",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)",  "modes": ["output"],         "required": true}
+      }
     },
     "mcp23017": {
       "name": "MCP23017 I/O Expander",
@@ -472,7 +677,11 @@
       "platform_type": null,
       "bus_type": "i2c",
       "icon": "git-branch",
-      "description": "16-Bit I²C GPIO-Expander"
+      "description": "16-Bit I²C GPIO-Expander",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)",  "modes": ["output"],         "required": true}
+      }
     },
 
     "wifi": {
@@ -547,7 +756,10 @@
       "platform_type": null,
       "bus_type": "gpio",
       "icon": "radio",
-      "description": "Infrarot- oder RF-Signal-Empfänger"
+      "description": "Infrarot- oder RF-Signal-Empfänger",
+      "pin_roles": {
+        "pin": {"label": "Empfänger-Pin", "modes": ["input"], "required": true}
+      }
     },
     "remote_transmitter": {
       "name": "IR/RF Sender",
@@ -555,7 +767,10 @@
       "platform_type": null,
       "bus_type": "gpio",
       "icon": "radio",
-      "description": "Infrarot- oder RF-Signal-Sender"
+      "description": "Infrarot- oder RF-Signal-Sender",
+      "pin_roles": {
+        "pin": {"label": "Sende-Pin (IR LED)", "modes": ["output"], "required": true}
+      }
     },
 
     "servo": {
@@ -572,7 +787,12 @@
       "platform_type": null,
       "bus_type": "gpio",
       "icon": "settings",
-      "description": "Schrittmotor-Steuerung (A4988, ULN2003, etc.)"
+      "description": "Schrittmotor-Steuerung (A4988, ULN2003, etc.)",
+      "pin_roles": {
+        "step_pin":  {"label": "STEP",            "modes": ["output"], "required": true},
+        "dir_pin":   {"label": "DIR (Richtung)",   "modes": ["output"], "required": true},
+        "sleep_pin": {"label": "SLEEP (optional)", "modes": ["output"], "required": false}
+      }
     },
     "rtttl": {
       "name": "RTTTL Buzzer",
@@ -580,7 +800,10 @@
       "platform_type": null,
       "bus_type": "gpio",
       "icon": "volume-2",
-      "description": "Piezo-Buzzer mit RTTTL-Melodien"
+      "description": "Piezo-Buzzer mit RTTTL-Melodien",
+      "pin_roles": {
+        "pin": {"label": "Buzzer-Pin", "modes": ["output","pwm"], "required": true}
+      }
     },
     "status_led": {
       "name": "Status LED",
@@ -588,7 +811,10 @@
       "platform_type": null,
       "bus_type": "gpio",
       "icon": "lightbulb",
-      "description": "LED zeigt ESPHome-Gerätestatus an"
+      "description": "LED zeigt ESPHome-Gerätestatus an",
+      "pin_roles": {
+        "pin": {"label": "LED-Pin", "modes": ["output"], "required": true}
+      }
     },
 
     "gt911": {
@@ -597,7 +823,13 @@
       "platform_type": "touchscreen",
       "bus_type": "i2c",
       "icon": "hand",
-      "description": "Kapazitiver Touch-Controller (I²C)"
+      "description": "Kapazitiver Touch-Controller (I²C)",
+      "pin_roles": {
+        "sda":           {"label": "SDA (Daten)",     "modes": ["input","output"], "required": true},
+        "scl":           {"label": "SCL (Takt)",      "modes": ["output"],         "required": true},
+        "interrupt_pin": {"label": "INT (Interrupt)", "modes": ["input"],          "required": false},
+        "reset_pin":     {"label": "RST (Reset)",     "modes": ["output"],         "required": false}
+      }
     },
     "cst816": {
       "name": "CST816 Touchscreen",
@@ -605,7 +837,13 @@
       "platform_type": "touchscreen",
       "bus_type": "i2c",
       "icon": "hand",
-      "description": "Kapazitiver Touch-Controller für kleine Displays"
+      "description": "Kapazitiver Touch-Controller für kleine Displays",
+      "pin_roles": {
+        "sda":           {"label": "SDA (Daten)",     "modes": ["input","output"], "required": true},
+        "scl":           {"label": "SCL (Takt)",      "modes": ["output"],         "required": true},
+        "interrupt_pin": {"label": "INT (Interrupt)", "modes": ["input"],          "required": false},
+        "reset_pin":     {"label": "RST (Reset)",     "modes": ["output"],         "required": false}
+      }
     },
     "ft5x06": {
       "name": "FT5x06 Touchscreen",
@@ -613,7 +851,12 @@
       "platform_type": "touchscreen",
       "bus_type": "i2c",
       "icon": "hand",
-      "description": "FocalTech kapazitiver Touch-Controller"
+      "description": "FocalTech kapazitiver Touch-Controller",
+      "pin_roles": {
+        "sda":           {"label": "SDA (Daten)",     "modes": ["input","output"], "required": true},
+        "scl":           {"label": "SCL (Takt)",      "modes": ["output"],         "required": true},
+        "interrupt_pin": {"label": "INT (optional)",  "modes": ["input"],          "required": false}
+      }
     },
 
     "sntp": {
@@ -630,7 +873,11 @@
       "platform_type": "time",
       "bus_type": "i2c",
       "icon": "clock",
-      "description": "Echtzeituhr-Modul über I²C"
+      "description": "Echtzeituhr-Modul über I²C",
+      "pin_roles": {
+        "sda": {"label": "SDA (Daten)", "modes": ["input","output"], "required": true},
+        "scl": {"label": "SCL (Takt)",  "modes": ["output"],         "required": true}
+      }
     },
 
     "speed": {
@@ -647,7 +894,12 @@
       "platform_type": null,
       "bus_type": "uart",
       "icon": "cpu",
-      "description": "Tuya/Smart-Life MCU Kommunikation über Serial"
+      "description": "Tuya/Smart-Life MCU Kommunikation über Serial",
+      "uart_baud": 9600,
+      "pin_roles": {
+        "tx_pin": {"label": "TX → Tuya RX", "modes": ["output"], "required": true},
+        "rx_pin": {"label": "RX ← Tuya TX", "modes": ["input"],  "required": true}
+      }
     },
 
     "esp32_camera": {
@@ -681,7 +933,12 @@
       "bus_type": "i2s",
       "icon": "volume-2",
       "description": "Lautsprecher über I²S Audio-Interface",
-      "_esphome_id": "i2s_audio"
+      "_esphome_id": "i2s_audio",
+      "pin_roles": {
+        "bclk_pin":  {"label": "BCLK (Bit-Clock)", "modes": ["output"], "required": true},
+        "lrclk_pin": {"label": "LRCLK / WS",       "modes": ["output"], "required": true},
+        "dout_pin":  {"label": "DOUT (Daten)",      "modes": ["output"], "required": true}
+      }
     },
     "i2s_audio_microphone": {
       "name": "I²S Mikrofon",
@@ -690,7 +947,12 @@
       "bus_type": "i2s",
       "icon": "mic",
       "description": "Mikrofon über I²S Audio-Interface",
-      "_esphome_id": "i2s_audio"
+      "_esphome_id": "i2s_audio",
+      "pin_roles": {
+        "bclk_pin":  {"label": "BCLK (Bit-Clock)", "modes": ["output"], "required": true},
+        "lrclk_pin": {"label": "LRCLK / WS",       "modes": ["output"], "required": true},
+        "din_pin":   {"label": "DIN (Mikrofon-Daten)", "modes": ["input"], "required": true}
+      }
     }
   }
 }

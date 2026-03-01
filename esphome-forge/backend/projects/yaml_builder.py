@@ -59,6 +59,15 @@ BUS_COMPONENTS: dict[str, str] = {
     "i2s_audio_microphone":"i2s",
 }
 
+# Baud-Rate Defaults pro UART-Komponente
+UART_BAUD_DEFAULTS: dict[str, int] = {
+    "ld2410":  256000,
+    "ld2412":  115200,
+    "nextion":   9600,
+    "pmsx003":   9600,
+    "tuya":      9600,
+}
+
 # Platform-Typ → YAML top-level key
 PLATFORM_YAML_KEY: dict[str, str] = {
     "sensor":         "sensor",
@@ -159,9 +168,17 @@ def build_yaml(
 
     lines.append("")
 
+    # ── UART IDs pro Komponente vorberechnen ───────────────────────────────
+    uart_comp_ids: dict[str, str] = {}  # comp_type → uart_id
+    for comp in components:
+        enr = enrichment.get(comp.comp_type, {})
+        bus = enr.get("bus_type") or BUS_COMPONENTS.get(comp.comp_type)
+        if bus == "uart" and comp.comp_type not in uart_comp_ids:
+            uart_comp_ids[comp.comp_type] = f"uart_{comp.comp_type}"
+
     # ── 6. Bus-Blöcke ermitteln und injizieren ─────────────────────────────
     needed_buses = _detect_needed_buses(components, enrichment)
-    bus_lines = _build_bus_blocks(needed_buses, components, project.chip_family)
+    bus_lines = _build_bus_blocks(needed_buses, components, project.chip_family, enrichment, uart_comp_ids)
     if bus_lines:
         lines.append("# ── Bus-Konfiguration ──")
         lines.extend(bus_lines)
@@ -202,7 +219,7 @@ def build_yaml(
         lines.append(f"# --- {yaml_key} ---")
         lines.append(f"{yaml_key}:")
         for comp, enr in group:
-            comp_lines = _build_component_block(comp, enr, platform_type, indent=2)
+            comp_lines = _build_component_block(comp, enr, platform_type, indent=2, uart_comp_ids=uart_comp_ids)
             lines.extend(comp_lines)
         lines.append("")
 
@@ -246,19 +263,24 @@ def _build_bus_blocks(
     needed_buses: set[str],
     components: list[ProjectComponent],
     chip_family: str,
+    enrichment: dict,
+    uart_comp_ids: dict[str, str],
 ) -> list[str]:
     """Generiert die benötigten Bus-Konfigurationsblöcke."""
     lines: list[str] = []
 
     if "i2c" in needed_buses:
         defaults = I2C_DEFAULTS.get(chip_family, I2C_DEFAULTS["ESP32"])
-        # Prüfe ob ein Komponent explizite I2C-Pins hat
+        # Prüfe ob eine Komponente explizite I2C-Pins hat (erste Angabe gewinnt)
         sda, scl = defaults["sda"], defaults["scl"]
         for comp in components:
             if comp.pins.get("sda"):
                 sda = comp.pins["sda"]
+                break
+        for comp in components:
             if comp.pins.get("scl"):
                 scl = comp.pins["scl"]
+                break
         lines.append("i2c:")
         lines.append(f"  sda: GPIO{sda}")
         lines.append(f"  scl: GPIO{scl}")
@@ -273,10 +295,15 @@ def _build_bus_blocks(
         for comp in components:
             if comp.pins.get("clk_pin"):
                 clk = comp.pins["clk_pin"]
+                break
+        for comp in components:
             if comp.pins.get("mosi_pin"):
                 mosi = comp.pins["mosi_pin"]
+                break
+        for comp in components:
             if comp.pins.get("miso_pin"):
                 miso = comp.pins["miso_pin"]
+                break
         lines.append("spi:")
         lines.append(f"  clk_pin: GPIO{clk}")
         lines.append(f"  mosi_pin: GPIO{mosi}")
@@ -284,45 +311,47 @@ def _build_bus_blocks(
         lines.append("")
 
     if "uart" in needed_buses:
-        # UART-Konfiguration (benötigt explizite Pins)
-        tx_pin: int | None = None
-        rx_pin: int | None = None
+        # Pro UART-Komponente einen eigenen uart-Block mit ID
+        lines.append("uart:")
         for comp in components:
-            if comp.pins.get("tx_pin"):
-                tx_pin = comp.pins["tx_pin"]
-            if comp.pins.get("rx_pin"):
-                rx_pin = comp.pins["rx_pin"]
-        if tx_pin is not None or rx_pin is not None:
-            lines.append("uart:")
+            enr = enrichment.get(comp.comp_type, {})
+            bus = enr.get("bus_type") or BUS_COMPONENTS.get(comp.comp_type)
+            if bus != "uart":
+                continue
+            uart_id = uart_comp_ids.get(comp.comp_type, f"uart_{comp.comp_type}")
+            tx_pin = comp.pins.get("tx_pin")
+            rx_pin = comp.pins.get("rx_pin")
+            baud = enr.get("uart_baud") or UART_BAUD_DEFAULTS.get(comp.comp_type, 9600)
+            if comp.config.get("baud_rate"):
+                baud = int(comp.config["baud_rate"])
+            lines.append(f"  - id: {uart_id}")
             if tx_pin is not None:
-                lines.append(f"  tx_pin: GPIO{tx_pin}")
+                lines.append(f"    tx_pin: GPIO{tx_pin}")
             if rx_pin is not None:
-                lines.append(f"  rx_pin: GPIO{rx_pin}")
-            baud = 9600  # Default; kann per config überschrieben werden
-            for comp in components:
-                if comp.config.get("baud_rate"):
-                    baud = int(comp.config["baud_rate"])
-            lines.append(f"  baud_rate: {baud}")
-            lines.append("")
+                lines.append(f"    rx_pin: GPIO{rx_pin}")
+            lines.append(f"    baud_rate: {baud}")
+        lines.append("")
 
     if "1wire" in needed_buses:
-        # 1-Wire benötigt einen Pin
-        ow_pin: int | None = None
+        # Pro 1-Wire Komponente einen one_wire Block mit ID
+        lines.append("one_wire:")
+        ow_index = 0
         for comp in components:
-            if comp.pins.get("pin") and comp.comp_type in ("dallas_temp",):
-                ow_pin = comp.pins["pin"]
-        if ow_pin is not None:
-            lines.append("one_wire:")
-            lines.append(f"  - platform: gpio")
-            lines.append(f"    pin: GPIO{ow_pin}")
-            lines.append("")
+            if comp.comp_type in ("dallas_temp", "one_wire") and comp.pins.get("pin"):
+                lines.append(f"  - platform: gpio")
+                lines.append(f"    pin: GPIO{comp.pins['pin']}")
+                lines.append(f"    id: ow_{ow_index}")
+                ow_index += 1
+        lines.append("")
 
     if "i2s" in needed_buses:
         # I2S Audio Bus
         i2s_pins: dict[str, int] = {}
         for comp in components:
             if comp.comp_type in ("i2s_audio", "i2s_audio_speaker", "i2s_audio_microphone"):
-                i2s_pins.update(comp.pins)
+                for k, v in comp.pins.items():
+                    if k not in i2s_pins:
+                        i2s_pins[k] = v
         if i2s_pins:
             lines.append("i2s_audio:")
             if "bclk_pin" in i2s_pins:
@@ -334,24 +363,55 @@ def _build_bus_blocks(
     return lines
 
 
+# Pins die in den Bus-Block gehören (nicht in den Komponenten-Block)
+_BUS_PIN_KEYS = frozenset(("sda", "scl", "clk_pin", "mosi_pin", "miso_pin", "tx_pin", "rx_pin", "bclk_pin", "lrclk_pin"))
+# Pins die bei 1-Wire-Komponenten in den Bus-Block gehören
+_ONE_WIRE_COMP_TYPES = frozenset(("dallas_temp",))
+
+
 def _build_component_block(
     comp: ProjectComponent,
     enr: dict,
     platform_type: str,
     indent: int = 2,
+    uart_comp_ids: dict[str, str] | None = None,
 ) -> list[str]:
     """Baut einen Platform-Component-Block (z.B. unter sensor:)."""
     prefix = " " * indent
     lines: list[str] = []
 
-    lines.append(f"{prefix}- platform: {comp.comp_type}")
-    # Name für HA
-    lines.append(f'{prefix}  name: "{comp.name}"')
+    # ESPHome-ID aus Enrichment (z.B. gpio_switch → gpio)
+    esphome_id = enr.get("_esphome_id", comp.comp_type)
+    lines.append(f"{prefix}- platform: {esphome_id}")
 
-    # Pin-Zuweisungen
+    # Name / Sub-Sensoren / Output-ID
+    sub_sensors = enr.get("sub_sensors", [])
+    if platform_type == "output":
+        # Output-Komponenten haben id, keinen name in HA
+        lines.append(f"{prefix}  id: {comp.comp_type}_{comp.uid[:6]}")
+    elif sub_sensors:
+        # Multi-Entity: Jede Sub-Entity bekommt eigenen Namen
+        for sub in sub_sensors:
+            sub_label = sub.replace("_", " ").title()
+            lines.append(f"{prefix}  {sub}:")
+            lines.append(f'{prefix}    name: "{comp.name} {sub_label}"')
+    else:
+        lines.append(f'{prefix}  name: "{comp.name}"')
+
+    # Bus-Referenz: UART
+    if uart_comp_ids and comp.comp_type in uart_comp_ids:
+        lines.append(f"{prefix}  uart_id: {uart_comp_ids[comp.comp_type]}")
+
+    # Bus-Referenz: 1-Wire
+    if comp.comp_type in _ONE_WIRE_COMP_TYPES:
+        lines.append(f"{prefix}  one_wire_id: ow_0")
+
+    # Pin-Zuweisungen (Bus-Pins und 1-Wire-Pins werden im Bus-Block behandelt)
+    skip_pin_keys = set(_BUS_PIN_KEYS)
+    if comp.comp_type in _ONE_WIRE_COMP_TYPES:
+        skip_pin_keys.add("pin")  # 1-Wire Pin gehört in one_wire Block
     for role, gpio in sorted(comp.pins.items()):
-        # Bus-Pins (sda, scl, etc.) werden im Bus-Block behandelt
-        if role in ("sda", "scl", "clk_pin", "mosi_pin", "miso_pin", "tx_pin", "rx_pin"):
+        if role in skip_pin_keys:
             continue
         lines.append(f"{prefix}  {role}: GPIO{gpio}")
 

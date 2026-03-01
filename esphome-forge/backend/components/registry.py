@@ -265,6 +265,9 @@ class ComponentRegistry:
             if raw_schema:
                 config_fields = self._extract_config_fields(raw_schema)
 
+        # Enrichment-basierte Pin-Roles und Extra-Config-Felder injizieren
+        config_fields = self._inject_pin_roles(comp_id, enrichment, config_fields)
+
         return ComponentDetail(
             **summary.model_dump(),
             config_fields=config_fields,
@@ -274,6 +277,56 @@ class ComponentRegistry:
             chip_families=None,
             raw_schema=raw_schema,
         )
+
+    def _inject_pin_roles(
+        self,
+        comp_id: str,
+        enrichment: dict,
+        config_fields: list[ConfigField],
+    ) -> list[ConfigField]:
+        """Pin-Roles und Extra-Config-Felder aus Enrichment injizieren.
+
+        Wenn pin_roles in enrichment definiert sind, werden alle auto-extrahierten
+        Pin-Felder ersetzt. extra_config_fields werden als ConfigFields vorne eingefügt.
+        """
+        pin_roles = enrichment.get("pin_roles", {})
+        extra_config = enrichment.get("extra_config_fields", [])
+
+        if not pin_roles and not extra_config:
+            return config_fields
+
+        # Wenn pin_roles definiert: Auto-extrahierte Pin-Felder ersetzen
+        if pin_roles:
+            non_pin = [f for f in config_fields if f.type != "pin"]
+        else:
+            non_pin = list(config_fields)
+
+        # Pin-Felder aus pin_roles erzeugen
+        pin_fields = [
+            ConfigField(
+                key=role_name,
+                type="pin",
+                required=role_info.get("required", True),
+                description=role_info.get("label", role_name),
+                pin_modes=role_info.get("modes", []),
+            )
+            for role_name, role_info in pin_roles.items()
+        ]
+
+        # Extra-Config-Felder erzeugen (z.B. model, num_leds)
+        extra_fields = [
+            ConfigField(
+                key=ec["key"],
+                type=ec.get("type", "string"),
+                required=ec.get("required", False),
+                default=ec.get("default"),
+                description=ec.get("label", ec["key"]),
+                enum_values=ec.get("enum_values"),
+            )
+            for ec in extra_config
+        ]
+
+        return pin_fields + extra_fields + non_pin
 
     def _get_raw_config_schema(self, comp_id: str, platform_type: str | None) -> dict | None:
         """Das rohe CONFIG_SCHEMA aus den Schema-Dateien holen."""
