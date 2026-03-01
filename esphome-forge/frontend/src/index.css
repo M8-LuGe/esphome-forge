@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html, body, #root {
+    @apply h-full;
+  }
+  /* Scrollbar */
+  ::-webkit-scrollbar        { @apply w-1.5 h-1.5; }
+  ::-webkit-scrollbar-track  { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb  { @apply bg-border rounded-full; }
+}
+
+@layer components {
+  .badge {
+    @apply inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium;
+  }
+  .badge-green  { @apply badge bg-green-900/40 text-green-300 ring-1 ring-green-700/40; }
+  .badge-yellow { @apply badge bg-yellow-900/40 text-yellow-300 ring-1 ring-yellow-700/40; }
+  .badge-red    { @apply badge bg-red-900/40 text-red-300 ring-1 ring-red-700/40; }
+  .badge-blue   { @apply badge bg-blue-900/40 text-blue-300 ring-1 ring-blue-700/40; }
+  .badge-gray   { @apply badge bg-white/5 text-slate-400 ring-1 ring-white/10; }
+}

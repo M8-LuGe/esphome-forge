@@ -1,0 +1,315 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://esphome-forge.dev/schemas/board/v1.json",
+  "title": "ESPHome Forge – Board Definition v1",
+  "description": "Vollständige Hardwarebeschreibung eines ESP-Entwicklungsboards. Dient als Basis für GPIO-Konflikterkennung, Komponentenvorschläge und YAML-Generierung.",
+  "type": "object",
+  "required": ["id", "name", "chip", "esphome_board", "gpios"],
+  "additionalProperties": false,
+
+  "properties": {
+    "$schema": { "type": "string" },
+
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "description": "Eindeutiger kebab-case-Bezeichner, z.B. 'esp32-wroom-32'"
+    },
+    "name": {
+      "type": "string",
+      "description": "Lesbarer Produktname, z.B. 'ESP32-WROOM-32 DevKit'"
+    },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Alternative / Community-Namen, z.B. ['CYD', 'Cheap Yellow Display']"
+    },
+    "manufacturer": { "type": "string" },
+    "category": {
+      "type": "string",
+      "enum": ["devkit", "module", "complete-device", "custom"],
+      "description": "devkit=Entwicklungsboard mit Headern; module=reine Modulplatine; complete-device=fertiges Gerät"
+    },
+    "esphome_board": {
+      "type": "string",
+      "description": "ESPHome board-Schlüssel (boards/*.yaml), z.B. 'esp32dev' oder 'esp32-c3-devkitm-1'"
+    },
+    "esphome_framework": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["arduino", "esp-idf"] },
+      "description": "Unterstützte Frameworks. Leer = beide."
+    },
+    "image_url": {
+      "type": "string",
+      "description": "URL zu einem Foto des Boards (für die UI-Visualisierung)"
+    },
+    "datasheet_url": { "type": "string" },
+    "purchase_urls": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+
+    "chip": {
+      "type": "object",
+      "required": ["family", "variant", "cpu_mhz", "ram_kb", "flash_mb"],
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "type": "string",
+          "enum": ["ESP32", "ESP32-S2", "ESP32-S3", "ESP32-C3", "ESP32-C6", "ESP32-H2", "ESP8266"],
+          "description": "Chip-Familie bestimmt verfügbare Peripherals und GPIO-Fähigkeiten"
+        },
+        "model":    { "type": "string", "description": "Exakte Chip-Bezeichnung, z.B. 'ESP32-D0WDQ6'" },
+        "variant":  { "type": "string", "description": "z.B. 'ESP32', 'ESP32-C3FH4'" },
+        "revision_min": { "type": ["integer", "null"] },
+        "cpu_cores": { "type": "integer" },
+        "cpu_arch": {
+          "type": "string",
+          "enum": ["xtensa-lx6", "xtensa-lx7", "riscv"],
+          "description": "Prozessorarchitektur"
+        },
+        "cpu_mhz":  { "type": "integer" },
+        "ram_kb":   { "type": "integer", "description": "SRAM in KB" },
+        "flash_mb": { "type": "integer", "description": "Internes Flash in MB" },
+        "psram_mb": { "type": ["integer", "null"], "description": "Externes PSRAM in MB, null=kein PSRAM" },
+        "psram_mode": {
+          "type": ["string", "null"],
+          "enum": ["SPI", "QSPI", "OPI", null]
+        },
+        "wifi":       { "type": "boolean" },
+        "bluetooth": {
+          "type": ["string", "null"],
+          "enum": ["BLE", "BT+BLE", "BT Classic", null]
+        },
+        "ethernet":    { "type": "boolean" },
+        "usb_native":  {
+          "type": "boolean",
+          "description": "true = nativer USB-Controller im Chip (ESP32-S2/S3/C3)"
+        }
+      }
+    },
+
+    "power": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "voltage_logic": { "type": "number", "description": "Logikspannung in V, typisch 3.3" },
+        "voltage_input_min": { "type": "number" },
+        "voltage_input_max": { "type": "number" }
+      }
+    },
+
+    "gpios": {
+      "type": "array",
+      "description": "Vollständige Liste aller verfügbaren GPIOs dieses Boards",
+      "items": { "$ref": "#/definitions/gpio" }
+    },
+
+    "builtin_components": {
+      "type": "array",
+      "description": "Auf der Platine fest verlötete Komponenten (Display, LEDs, Sensoren etc.)",
+      "items": { "$ref": "#/definitions/builtin_component" }
+    },
+
+    "notes": { "type": "string" },
+    "community_url": { "type": "string" }
+  },
+
+  "definitions": {
+
+    "gpio": {
+      "type": "object",
+      "required": ["num", "labels", "input", "output"],
+      "additionalProperties": false,
+      "properties": {
+        "num": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Logische GPIO-Nummer (wie in ESPHome verwendet)"
+        },
+        "labels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Aufschriften auf dem Board, z.B. ['GPIO14', 'IO14', 'D14']"
+        },
+        "input":  { "type": "boolean", "description": "Als Eingang verwendbar" },
+        "output": { "type": "boolean", "description": "Als Ausgang verwendbar" },
+        "od":     { "type": "boolean", "description": "Open-Drain-Ausgabe unterstützt" },
+        "pu":     { "type": "boolean", "description": "Interner Pull-up verfügbar" },
+        "pd":     { "type": "boolean", "description": "Interner Pull-down verfügbar" },
+        "rtc":    { "type": "boolean", "description": "RTC-GPIO (Wakeup aus Deep-Sleep)" },
+        "pwm":    { "type": "boolean", "description": "PWM-Ausgabe via LEDC/MCPWM" },
+
+        "adc": {
+          "description": "ADC-Fähigkeit. null = kein ADC.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["unit", "ch", "wifi_ok"],
+              "additionalProperties": false,
+              "properties": {
+                "unit":    { "type": "integer", "description": "ADC-Einheit (1 oder 2)" },
+                "ch":      { "type": "integer", "description": "Kanal-Nummer" },
+                "wifi_ok": {
+                  "type": "boolean",
+                  "description": "ADC1 (true) funktioniert mit WiFi. ADC2 (false) wird blockiert wenn WiFi aktiv!"
+                }
+              }
+            }
+          ]
+        },
+
+        "dac": {
+          "description": "DAC-Ausgabe. null = kein DAC. Nur ESP32 GPIO25/26.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["ch"],
+              "additionalProperties": false,
+              "properties": {
+                "ch":   { "type": "integer", "description": "DAC-Kanal (1=GPIO25, 2=GPIO26)" },
+                "note": { "type": "string" }
+              }
+            }
+          ]
+        },
+
+        "touch": {
+          "description": "Kapazitives Touch. null = nicht vorhanden.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["ch"],
+              "additionalProperties": false,
+              "properties": {
+                "ch": { "type": "integer", "description": "Touch-Kanal-Nummer" }
+              }
+            }
+          ]
+        },
+
+        "spi_hw": {
+          "description": "Hardware-SPI Bus-Zuordnung (native, keine GPIO-Matrix). null = kein Hardware-SPI-Default.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["bus", "role"],
+              "additionalProperties": false,
+              "properties": {
+                "bus":  { "type": "string", "enum": ["VSPI", "HSPI", "SPI0", "SPI1", "FSPI"] },
+                "role": { "type": "string", "enum": ["CLK", "MOSI", "MISO", "CS"] }
+              }
+            }
+          ]
+        },
+
+        "i2c_default": {
+          "description": "Wenn dieser Pin der Standard-I2C-Pin des Chips ist.",
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "enum": ["SDA", "SCL"] }
+          ]
+        },
+
+        "uart_default": {
+          "description": "UART Hardware-Default (UART0/1/2 TX/RX).",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["unit", "role"],
+              "additionalProperties": false,
+              "properties": {
+                "unit": { "type": "integer" },
+                "role": { "type": "string", "enum": ["TX", "RX"] }
+              }
+            }
+          ]
+        },
+
+        "strapping": {
+          "description": "Strapping-Pin-Verhalten beim Boot. null = kein Strapping-Pin.",
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string" }
+          ]
+        },
+
+        "flash": {
+          "type": "boolean",
+          "description": "Mit dem SPI-Flash verbunden – NICHT verwenden!"
+        },
+
+        "notes": { "type": "string" },
+
+        "board_usage": {
+          "description": "Wenn der Pin durch eine Built-in-Komponente belegt ist. null = frei.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["comp", "role"],
+              "additionalProperties": false,
+              "properties": {
+                "comp": { "type": "string", "description": "ID der builtin_component" },
+                "role": { "type": "string", "description": "Rolle des Pins (z.B. 'CLK', 'SDA', 'LED_R')" },
+                "note": { "type": "string" }
+              }
+            }
+          ]
+        }
+      }
+    },
+
+    "builtin_component": {
+      "type": "object",
+      "required": ["id", "type", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id":   { "type": "string", "description": "Eindeutiger Bezeichner, z.B. 'display_ili9341'" },
+        "type": {
+          "type": "string",
+          "enum": ["display", "touchscreen", "led", "rgb_led", "sensor",
+                   "media_player", "sd_card", "camera", "button", "uart_bridge", "other"],
+          "description": "Komponententyp bestimmt das ESPHome-Platform-Mapping"
+        },
+        "name": { "type": "string", "description": "Lesbarer Name, z.B. 'ILI9341 2.8\" TFT'" },
+        "esphome_platform": { "type": "string", "description": "ESPHome platform-Schlüssel, z.B. 'ili9xxx'" },
+        "esphome_model":    { "type": "string", "description": "ESPHome model-Parameter, z.B. 'ili9341'" },
+        "active_level": {
+          "type": "string",
+          "enum": ["high", "low"],
+          "description": "Aktiver Pegel (relevant für LEDs, Relais etc.)"
+        },
+        "pins": {
+          "type": "object",
+          "description": "Pin-Zuordnung: Schlüssel=Rollenname, Wert=GPIO-Referenz",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["gpio"],
+            "additionalProperties": false,
+            "properties": {
+              "gpio": { "type": "integer" },
+              "role": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "config": {
+          "type": "object",
+          "description": "Vorgabe-Konfigurationsparameter für die YAML-Generierung"
+        },
+        "optional": {
+          "type": "boolean",
+          "description": "true = Komponente kann ignoriert werden (z.B. nicht bestückter SD-Slot)"
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

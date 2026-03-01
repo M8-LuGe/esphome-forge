@@ -1,0 +1,244 @@
+{
+  "$schema": "../board.schema.json",
+  "id": "esp32-c3-supermini",
+  "name": "ESP32-C3 SuperMini",
+  "aliases": ["ESP32-C3 Super Mini", "C3 SuperMini", "ESP-C3-12F SuperMini"],
+  "manufacturer": "Various (Referenzdesign basierend auf ESP32-C3FH4)",
+  "category": "devkit",
+  "esphome_board": "esp32-c3-devkitm-1",
+  "esphome_framework": ["arduino", "esp-idf"],
+  "image_url": "https://raw.githubusercontent.com/Ha-sante/esp32c3_supermini/main/pinout.jpg",
+  "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf",
+  "purchase_urls": [
+    "https://www.aliexpress.com/item/1005005967641936.html"
+  ],
+  "chip": {
+    "family": "ESP32-C3",
+    "model": "ESP32-C3FH4",
+    "variant": "ESP32-C3",
+    "revision_min": 3,
+    "cpu_cores": 1,
+    "cpu_arch": "riscv",
+    "cpu_mhz": 160,
+    "ram_kb": 400,
+    "flash_mb": 4,
+    "psram_mb": null,
+    "psram_mode": null,
+    "wifi": true,
+    "bluetooth": "BLE",
+    "ethernet": false,
+    "usb_native": true
+  },
+  "power": {
+    "voltage_logic": 3.3,
+    "voltage_input_min": 4.5,
+    "voltage_input_max": 5.5
+  },
+  "notes": "Sehr kompaktes Board (~25×18mm). Onboard WS2812B RGB-LED an GPIO8. BOOT-Taster an GPIO9. Nativer USB-Serial/JTAG im Chip (GPIO18/19). KEIN ADC2 WiFi-Problem wie beim ESP32 – ADC1 (GPIO0-4) ist WiFi-kompatibel. Kein DAC, keine kapazitiven Touch-Pins. I2C/SPI/UART frei auf alle GPIOs über GPIO-Matrix zuteilbar. GPIO11-17 = SPI-Flash, nicht verfügbar.",
+  "community_url": "https://github.com/Ha-sante/esp32c3_supermini",
+
+  "builtin_components": [
+    {
+      "id": "rgb_led",
+      "type": "rgb_led",
+      "name": "WS2812B RGB-LED",
+      "esphome_platform": "neopixelbus",
+      "active_level": "high",
+      "pins": {
+        "data": { "gpio": 8, "role": "DATA", "note": "WS2812B Datenpin – Single-Wire-Protokoll" }
+      },
+      "config": {
+        "type": "GRB",
+        "variant": "ws2812x",
+        "num_leds": 1
+      },
+      "notes": "Onboard RGB-LED. Auch I2C SDA default – Konflikt vermeiden!"
+    },
+    {
+      "id": "boot_button",
+      "type": "button",
+      "name": "BOOT-Taster",
+      "pins": {
+        "btn": { "gpio": 9, "role": "INPUT", "note": "Aktiv-LOW, interner Pull-up" }
+      }
+    }
+  ],
+
+  "gpios": [
+    {
+      "num": 0,
+      "labels": ["GPIO0", "A0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "adc": { "unit": 1, "ch": 0, "wifi_ok": true },
+      "notes": "ADC1 CH0 – WiFi-kompatibel. Auf Header zugänglich."
+    },
+    {
+      "num": 1,
+      "labels": ["GPIO1", "A1"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "adc": { "unit": 1, "ch": 1, "wifi_ok": true },
+      "notes": "ADC1 CH1 – WiFi-kompatibel."
+    },
+    {
+      "num": 2,
+      "labels": ["GPIO2", "A2"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "adc": { "unit": 1, "ch": 2, "wifi_ok": true },
+      "notes": "ADC1 CH2 – WiFi-kompatibel."
+    },
+    {
+      "num": 3,
+      "labels": ["GPIO3", "A3"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "adc": { "unit": 1, "ch": 3, "wifi_ok": true },
+      "notes": "ADC1 CH3 – WiFi-kompatibel."
+    },
+    {
+      "num": 4,
+      "labels": ["GPIO4", "A4"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "adc": { "unit": 1, "ch": 4, "wifi_ok": true },
+      "notes": "ADC1 CH4 – WiFi-kompatibel. Letzter ADC-Pin auf C3."
+    },
+    {
+      "num": 5,
+      "labels": ["GPIO5"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "adc": { "unit": 2, "ch": 0, "wifi_ok": false },
+      "notes": "ADC2 CH0 – nicht mit WiFi nutzbar!"
+    },
+    {
+      "num": 6,
+      "labels": ["GPIO6"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true
+    },
+    {
+      "num": 7,
+      "labels": ["GPIO7"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true
+    },
+    {
+      "num": 8,
+      "labels": ["GPIO8", "SDA"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "i2c_default": "SDA",
+      "board_usage": {
+        "comp": "rgb_led", "role": "DATA",
+        "note": "Durch WS2812B belegt! Für I2C oder anderen IO: LED in YAML deaktivieren oder anderen Pin wählen."
+      },
+      "notes": "WS2812B RGB-LED. Standard I2C SDA – Konflikt!"
+    },
+    {
+      "num": 9,
+      "labels": ["GPIO9", "SCL", "BOOT"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "i2c_default": "SCL",
+      "strapping": "Boot-Modus: LOW beim Hochfahren = Download-Modus. BOOT-Taster aktiv-LOW.",
+      "board_usage": { "comp": "boot_button", "role": "INPUT" },
+      "notes": "BOOT-Taster verbunden. Standard I2C SCL."
+    },
+    {
+      "num": 10,
+      "labels": ["GPIO10"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "notes": "Freier GPIO. Auf Header zugänglich."
+    },
+    {
+      "num": 11,
+      "labels": ["GPIO11"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "flash": true,
+      "notes": "SPI-Flash VDD – NICHT VERWENDEN!"
+    },
+    {
+      "num": 12,
+      "labels": ["GPIO12"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "flash": true,
+      "notes": "SPI-Flash HD – NICHT VERWENDEN!"
+    },
+    {
+      "num": 13,
+      "labels": ["GPIO13"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "flash": true,
+      "notes": "SPI-Flash WP – NICHT VERWENDEN!"
+    },
+    {
+      "num": 14,
+      "labels": ["GPIO14"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "flash": true,
+      "notes": "SPI-Flash D3 – NICHT VERWENDEN!"
+    },
+    {
+      "num": 15,
+      "labels": ["GPIO15"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "flash": true,
+      "notes": "SPI-Flash D2 – NICHT VERWENDEN!"
+    },
+    {
+      "num": 16,
+      "labels": ["GPIO16"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "flash": true,
+      "notes": "SPI-Flash CLK – NICHT VERWENDEN!"
+    },
+    {
+      "num": 17,
+      "labels": ["GPIO17"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "flash": true,
+      "notes": "SPI-Flash CMD – NICHT VERWENDEN!"
+    },
+    {
+      "num": 18,
+      "labels": ["GPIO18", "D-"],
+      "input": true, "output": true, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "notes": "USB D- (nativer USB). Für USB-Serial/JTAG. Nicht für allgemeine GPIO-Nutzung geeignet."
+    },
+    {
+      "num": 19,
+      "labels": ["GPIO19", "D+"],
+      "input": true, "output": true, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false,
+      "notes": "USB D+ (nativer USB). Für USB-Serial/JTAG. Nicht für allgemeine GPIO-Nutzung geeignet."
+    },
+    {
+      "num": 20,
+      "labels": ["GPIO20", "RX", "RX0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 0, "role": "RX" },
+      "notes": "UART0 RX. Auf Header zugänglich (als 'RX' beschriftet)."
+    },
+    {
+      "num": 21,
+      "labels": ["GPIO21", "TX", "TX0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 0, "role": "TX" },
+      "notes": "UART0 TX. Auf Header zugänglich (als 'TX' beschriftet)."
+    }
+  ]
+}

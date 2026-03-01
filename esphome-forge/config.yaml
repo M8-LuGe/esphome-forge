@@ -1,0 +1,36 @@
+---
+name: "ESPHome Forge"
+version: "0.1.0"
+slug: "esphome-forge"
+description: "Visueller ESPHome-Konfigurator – Board → GPIO → Komponenten → YAML"
+url: "https://github.com/DEIN_USER/esphome-forge"
+arch:
+  - aarch64   # Raspberry Pi 4/5 (HA OS Standard)
+  - amd64     # x86 Server / VM
+  - armv7     # Raspberry Pi 3
+
+# Sidebar-Integration (kein separates Browser-Tab nötig)
+ingress: true
+ingress_port: 7052
+panel_icon: "mdi:chip"
+panel_title: "ESPHome Forge"
+
+# Berechtigungen
+homeassistant_api: true  # Entities/Services lesen (z.B. vorhandene Entitäten prüfen)
+hassio_api: true          # ESPHome Add-on API proxyen (Dashboard, OTA)
+hassio_role: default
+
+# Dateisystem-Mounts
+map:
+  - share:rw    # /share/esphome-forge/ – generierte YAMLs + custom boards
+  - config:ro   # /config/esphome/ – bestehende ESPHome YAMLs lesen (optional)
+
+# Keine exponierten Optionen in der HA-UI (alles in der App selbst konfigurieren)
+options: {}
+schema: {}
+
+# Ports (für direkten Zugriff neben Ingress, z.B. Entwicklung)
+ports:
+  7052/tcp: 7052
+ports_description:
+  7052/tcp: "ESPHome Forge Web-UI"

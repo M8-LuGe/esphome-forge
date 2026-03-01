@@ -1,0 +1,319 @@
+{
+  "$schema": "../board.schema.json",
+  "id": "esp32-wroom-32",
+  "name": "ESP32-WROOM-32 DevKit v1",
+  "aliases": ["ESP32 DevKit", "NodeMCU-32S", "esp32dev"],
+  "manufacturer": "Espressif",
+  "category": "devkit",
+  "esphome_board": "esp32dev",
+  "esphome_framework": ["arduino", "esp-idf"],
+  "image_url": "https://docs.espressif.com/projects/esp-idf/en/latest/_images/esp32-devkitC-v4-pinout.png",
+  "datasheet_url": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf",
+  "chip": {
+    "family": "ESP32",
+    "model": "ESP32-D0WDQ6",
+    "variant": "ESP32",
+    "revision_min": 0,
+    "cpu_cores": 2,
+    "cpu_arch": "xtensa-lx6",
+    "cpu_mhz": 240,
+    "ram_kb": 520,
+    "flash_mb": 4,
+    "psram_mb": null,
+    "psram_mode": null,
+    "wifi": true,
+    "bluetooth": "BT+BLE",
+    "ethernet": false,
+    "usb_native": false
+  },
+  "power": {
+    "voltage_logic": 3.3,
+    "voltage_input_min": 3.0,
+    "voltage_input_max": 3.6
+  },
+  "notes": "GPIO6-11 sind intern mit dem SPI-Flash verbunden und dürfen NICHT verwendet werden. ADC2 (GPIO0,2,4,12-15,25-27) funktioniert nicht wenn WiFi aktiv ist – nur ADC1 (GPIO32-39) verwenden!",
+  "community_url": "https://esphome.io/components/esp32.html",
+
+  "builtin_components": [
+    {
+      "id": "onboard_led",
+      "type": "led",
+      "name": "Onboard LED",
+      "esphome_platform": "gpio",
+      "active_level": "high",
+      "pins": {
+        "led": { "gpio": 2, "role": "LED", "note": "Blau, an GPIO2 (auch Strapping-Pin)" }
+      },
+      "notes": "Nicht auf allen DevKit-Varianten vorhanden"
+    }
+  ],
+
+  "gpios": [
+    {
+      "num": 0,
+      "labels": ["GPIO0", "IO0", "D0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 1, "wifi_ok": false },
+      "touch": { "ch": 1 },
+      "strapping": "Boot-Modus: LOW=Download-Modus, HIGH/Float=Normal-Boot. Intern 10kΩ Pull-up.",
+      "notes": "Vorsicht bei Verwendung als Ausgang – beeinflusst Boot-Modus."
+    },
+    {
+      "num": 1,
+      "labels": ["GPIO1", "IO1", "TX0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 0, "role": "TX" },
+      "notes": "UART0 TX (USB-Serial). Bei Verwendung kein Log-Output via USB."
+    },
+    {
+      "num": 2,
+      "labels": ["GPIO2", "IO2", "D2"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 2, "wifi_ok": false },
+      "touch": { "ch": 2 },
+      "strapping": "Muss beim Download-Modus LOW oder float sein. Mit internem Pull-down.",
+      "notes": "Onboard-LED auf vielen DevKit-Varianten."
+    },
+    {
+      "num": 3,
+      "labels": ["GPIO3", "IO3", "RX0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 0, "role": "RX" },
+      "notes": "UART0 RX (USB-Serial). HIGH beim Boot."
+    },
+    {
+      "num": 4,
+      "labels": ["GPIO4", "IO4", "D4"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 0, "wifi_ok": false },
+      "touch": { "ch": 0 }
+    },
+    {
+      "num": 5,
+      "labels": ["GPIO5", "IO5", "D5"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "CS" },
+      "strapping": "SDIO-Slave Timing; 10kΩ Pull-up beim Boot."
+    },
+    {
+      "num": 6,  "labels": ["GPIO6", "IO6", "CLK"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false, "flash": true,
+      "notes": "SPI-Flash CLK – NICHT VERWENDEN!"
+    },
+    {
+      "num": 7,  "labels": ["GPIO7", "IO7", "SD0"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false, "flash": true,
+      "notes": "SPI-Flash D0 – NICHT VERWENDEN!"
+    },
+    {
+      "num": 8,  "labels": ["GPIO8", "IO8", "SD1"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false, "flash": true,
+      "notes": "SPI-Flash D1 – NICHT VERWENDEN!"
+    },
+    {
+      "num": 9,  "labels": ["GPIO9", "IO9", "SD2"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false, "flash": true,
+      "notes": "SPI-Flash D2 – NICHT VERWENDEN!"
+    },
+    {
+      "num": 10, "labels": ["GPIO10", "IO10", "SD3"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false, "flash": true,
+      "notes": "SPI-Flash D3 – NICHT VERWENDEN!"
+    },
+    {
+      "num": 11, "labels": ["GPIO11", "IO11", "CMD"],
+      "input": false, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": false, "pwm": false, "flash": true,
+      "notes": "SPI-Flash CMD – NICHT VERWENDEN!"
+    },
+    {
+      "num": 12,
+      "labels": ["GPIO12", "IO12", "D12", "MTDI"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 5, "wifi_ok": false },
+      "touch": { "ch": 5 },
+      "spi_hw": { "bus": "HSPI", "role": "MISO" },
+      "strapping": "MTDI – wenn HIGH beim Boot: 1,8V Flash-Spannung → Boot-Fehler auf 3,3V-Boards! Immer LOW oder float lassen."
+    },
+    {
+      "num": 13,
+      "labels": ["GPIO13", "IO13", "D13", "MTCK"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 4, "wifi_ok": false },
+      "touch": { "ch": 4 },
+      "spi_hw": { "bus": "HSPI", "role": "MOSI" }
+    },
+    {
+      "num": 14,
+      "labels": ["GPIO14", "IO14", "D14", "MTMS"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 6, "wifi_ok": false },
+      "touch": { "ch": 6 },
+      "spi_hw": { "bus": "HSPI", "role": "CLK" },
+      "notes": "Gibt beim Boot einen Takt-Puls aus."
+    },
+    {
+      "num": 15,
+      "labels": ["GPIO15", "IO15", "D15", "MTDO"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 3, "wifi_ok": false },
+      "touch": { "ch": 3 },
+      "spi_hw": { "bus": "HSPI", "role": "CS" },
+      "strapping": "MTDO – steuert UART0-Debug-Ausgabe beim Boot (HIGH=aktiviert)."
+    },
+    {
+      "num": 16,
+      "labels": ["GPIO16", "IO16", "RX2"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 2, "role": "RX" }
+    },
+    {
+      "num": 17,
+      "labels": ["GPIO17", "IO17", "TX2"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 2, "role": "TX" }
+    },
+    {
+      "num": 18,
+      "labels": ["GPIO18", "IO18", "D18"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "CLK" }
+    },
+    {
+      "num": 19,
+      "labels": ["GPIO19", "IO19", "D19"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "MISO" }
+    },
+    {
+      "num": 21,
+      "labels": ["GPIO21", "IO21", "D21"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "i2c_default": "SDA"
+    },
+    {
+      "num": 22,
+      "labels": ["GPIO22", "IO22", "D22"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "i2c_default": "SCL"
+    },
+    {
+      "num": 23,
+      "labels": ["GPIO23", "IO23", "D23"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "MOSI" }
+    },
+    {
+      "num": 25,
+      "labels": ["GPIO25", "IO25", "D25"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 8, "wifi_ok": false },
+      "dac": { "ch": 1, "note": "DAC1 – Audio-Ausgang möglich (z.B. I2S interner DAC)" }
+    },
+    {
+      "num": 26,
+      "labels": ["GPIO26", "IO26", "D26"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 9, "wifi_ok": false },
+      "dac": { "ch": 2, "note": "DAC2 – primärer Audio-Ausgang für internen I2S-DAC" }
+    },
+    {
+      "num": 27,
+      "labels": ["GPIO27", "IO27", "D27"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 7, "wifi_ok": false },
+      "touch": { "ch": 7 }
+    },
+    {
+      "num": 32,
+      "labels": ["GPIO32", "IO32", "D32"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 1, "ch": 4, "wifi_ok": true },
+      "touch": { "ch": 9 },
+      "notes": "ADC1 – WiFi-kompatibel! Bevorzugen für analoge Messungen."
+    },
+    {
+      "num": 33,
+      "labels": ["GPIO33", "IO33", "D33"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 1, "ch": 5, "wifi_ok": true },
+      "touch": { "ch": 8 },
+      "notes": "ADC1 – WiFi-kompatibel!"
+    },
+    {
+      "num": 34,
+      "labels": ["GPIO34", "IO34", "D34"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 6, "wifi_ok": true },
+      "notes": "INPUT-ONLY. Kein Pull-up/down. ADC1 WiFi-kompatibel."
+    },
+    {
+      "num": 35,
+      "labels": ["GPIO35", "IO35", "D35"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 7, "wifi_ok": true },
+      "notes": "INPUT-ONLY. Kein Pull-up/down. ADC1 WiFi-kompatibel."
+    },
+    {
+      "num": 36,
+      "labels": ["GPIO36", "IO36", "VP", "SVP"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 0, "wifi_ok": true },
+      "notes": "INPUT-ONLY (VP). Kein Pull-up/down. Ideal für Analogsensoren."
+    },
+    {
+      "num": 37,
+      "labels": ["GPIO37", "IO37"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 1, "wifi_ok": true },
+      "notes": "INPUT-ONLY. Oft kein Header-Pin auf DevKit v1."
+    },
+    {
+      "num": 38,
+      "labels": ["GPIO38", "IO38"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 2, "wifi_ok": true },
+      "notes": "INPUT-ONLY. Oft kein Header-Pin auf DevKit v1."
+    },
+    {
+      "num": 39,
+      "labels": ["GPIO39", "IO39", "VN", "SVN"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 3, "wifi_ok": true },
+      "notes": "INPUT-ONLY (VN). Kein Pull-up/down. Ideal für Analogsensoren."
+    }
+  ]
+}

@@ -1,0 +1,396 @@
+{
+  "$schema": "../board.schema.json",
+  "id": "esp32-2432s028r",
+  "name": "ESP32-2432S028R",
+  "aliases": ["CYD", "Cheap Yellow Display", "2.8\" ESP32 Touch Display", "ZJ-2432S028R"],
+  "manufacturer": "Shenzhen Jingcai Intelligent",
+  "category": "complete-device",
+  "esphome_board": "esp32dev",
+  "esphome_framework": ["arduino"],
+  "image_url": "https://raw.githubusercontent.com/witnessmenow/ESP32-Cheap-Yellow-Display/main/images/CYD.jpg",
+  "datasheet_url": "https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/main/HARDWARE.md",
+  "purchase_urls": [
+    "https://www.aliexpress.com/item/1005004502250619.html"
+  ],
+  "chip": {
+    "family": "ESP32",
+    "model": "ESP32-D0WDQ6",
+    "variant": "ESP32",
+    "revision_min": 0,
+    "cpu_cores": 2,
+    "cpu_arch": "xtensa-lx6",
+    "cpu_mhz": 240,
+    "ram_kb": 520,
+    "flash_mb": 4,
+    "psram_mb": null,
+    "psram_mode": null,
+    "wifi": true,
+    "bluetooth": "BT+BLE",
+    "ethernet": false,
+    "usb_native": false
+  },
+  "power": {
+    "voltage_logic": 3.3,
+    "voltage_input_min": 4.5,
+    "voltage_input_max": 5.5
+  },
+  "notes": "Frei verfügbare GPIOs nach Built-in-Belegung: GPIO0, GPIO1(TX), GPIO3(RX), GPIO22, GPIO27, GPIO35. GPIO25 ist Touch-CLK UND interner DAC1 – bei I2S-DAC-Nutzung Takt-Pins auf GPIO22/27 legen. ADC2 (alle WiFi-gesperrten) ohnehin durch Built-ins belegt.",
+  "community_url": "https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display",
+
+  "builtin_components": [
+    {
+      "id": "display_ili9341",
+      "type": "display",
+      "name": "ILI9341 2.8\" TFT 320×240",
+      "esphome_platform": "ili9xxx",
+      "esphome_model": "ili9341",
+      "pins": {
+        "clk":  { "gpio": 14, "role": "CLK",        "note": "HSPI Hardware-CLK" },
+        "mosi": { "gpio": 13, "role": "MOSI",       "note": "HSPI Hardware-MOSI" },
+        "miso": { "gpio": 12, "role": "MISO",       "note": "HSPI Hardware-MISO" },
+        "cs":   { "gpio": 15, "role": "CS" },
+        "dc":   { "gpio": 2,  "role": "DC",         "note": "Auch Strapping-Pin!" },
+        "bl":   { "gpio": 21, "role": "BACKLIGHT",  "note": "LEDC-PWM dimmbar" }
+      },
+      "config": {
+        "rotation": 90,
+        "invert_colors": false,
+        "color_order": "bgr",
+        "update_interval": "never"
+      }
+    },
+    {
+      "id": "touch_xpt2046",
+      "type": "touchscreen",
+      "name": "XPT2046 Resistiv-Touch",
+      "esphome_platform": "xpt2046",
+      "pins": {
+        "clk":  { "gpio": 25, "role": "CLK",  "note": "Eigener SPI-Bus nötig – nicht HSPI/VSPI!" },
+        "mosi": { "gpio": 32, "role": "MOSI" },
+        "miso": { "gpio": 39, "role": "MISO", "note": "Input-only GPIO – kein Pull-up" },
+        "cs":   { "gpio": 33, "role": "CS" },
+        "irq":  { "gpio": 36, "role": "IRQ",  "note": "Input-only GPIO" }
+      },
+      "config": {
+        "update_interval": "50ms",
+        "threshold": 400,
+        "calibration": {
+          "x_min": 280, "x_max": 3860,
+          "y_min": 340, "y_max": 3860
+        },
+        "transform": { "swap_xy": true, "mirror_x": true, "mirror_y": false }
+      }
+    },
+    {
+      "id": "rgb_led",
+      "type": "rgb_led",
+      "name": "RGB-LED",
+      "active_level": "low",
+      "pins": {
+        "red":   { "gpio": 4,  "role": "LED_R" },
+        "green": { "gpio": 16, "role": "LED_G" },
+        "blue":  { "gpio": 17, "role": "LED_B" }
+      },
+      "notes": "Aktiv-LOW (LOW = an). Kein PWM nötig, aber möglich."
+    },
+    {
+      "id": "ldr",
+      "type": "sensor",
+      "name": "LDR Umgebungshelligkeit",
+      "esphome_platform": "adc",
+      "pins": {
+        "adc": { "gpio": 34, "role": "ADC", "note": "ADC1 CH6 – WiFi-kompatibel" }
+      },
+      "config": {
+        "attenuation": "11dB",
+        "update_interval": "60s",
+        "filters": [{ "multiply": 3.3 }]
+      }
+    },
+    {
+      "id": "speaker",
+      "type": "media_player",
+      "name": "Speaker (Interner I2S-DAC)",
+      "esphome_platform": "i2s_audio",
+      "pins": {
+        "dac_out": {
+          "gpio": 26, "role": "DAC2_LEFT",
+          "note": "Im Silizium fest. GPIO26=DAC2/Left→Amp→P4. Nicht änderbar."
+        },
+        "dac_ref": {
+          "gpio": 25, "role": "DAC1_RIGHT",
+          "note": "Intern mitaktiviert, unbenutzt. GPIO25 ist auch Touch-CLK!"
+        }
+      },
+      "config": {
+        "dac_type": "internal",
+        "mode": "left",
+        "sample_rate": 32000,
+        "bits_per_sample": "16bit",
+        "i2s_lrclk_pin": "GPIO22",
+        "i2s_bclk_pin": "GPIO27"
+      },
+      "notes": "i2s_lrclk/bclk können auf freie GPIOs (22/27) gelegt werden. Der DAC-Ausgang bleibt immer GPIO25/26."
+    },
+    {
+      "id": "sd_card",
+      "type": "sd_card",
+      "name": "SD-Karten-Slot",
+      "optional": true,
+      "pins": {
+        "clk":  { "gpio": 18, "role": "CLK",  "note": "VSPI Hardware-CLK" },
+        "mosi": { "gpio": 23, "role": "MOSI", "note": "VSPI Hardware-MOSI" },
+        "miso": { "gpio": 19, "role": "MISO", "note": "VSPI Hardware-MISO" },
+        "cs":   { "gpio": 5,  "role": "CS",   "note": "VSPI Default-CS + Strapping-Pin" }
+      },
+      "notes": "Optional – nur nutzen wenn SD-Karte wirklich benötigt. Gibt VSPI-Bus frei wenn deaktiviert."
+    }
+  ],
+
+  "gpios": [
+    {
+      "num": 0,
+      "labels": ["GPIO0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 1, "wifi_ok": false },
+      "touch": { "ch": 1 },
+      "strapping": "Boot-Modus: LOW=Download, HIGH=Normal. Intern 10kΩ Pull-up.",
+      "notes": "Einer der wenigen freien GPIOs auf dem CYD."
+    },
+    {
+      "num": 1,
+      "labels": ["GPIO1", "TX0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 0, "role": "TX" },
+      "notes": "Frei wenn UART0-Debug nicht benötigt. Auf CN1-Stecker erreichbar."
+    },
+    {
+      "num": 2,
+      "labels": ["GPIO2", "IO2"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 2, "wifi_ok": false },
+      "touch": { "ch": 2 },
+      "strapping": "Muss beim Download-Modus LOW sein.",
+      "board_usage": { "comp": "display_ili9341", "role": "DC" }
+    },
+    {
+      "num": 3,
+      "labels": ["GPIO3", "RX0"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 0, "role": "RX" },
+      "notes": "Frei wenn UART0-Debug nicht benötigt. Auf CN1-Stecker erreichbar."
+    },
+    {
+      "num": 4,
+      "labels": ["GPIO4", "IO4"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 0, "wifi_ok": false },
+      "touch": { "ch": 0 },
+      "board_usage": { "comp": "rgb_led", "role": "LED_R" }
+    },
+    {
+      "num": 5,
+      "labels": ["GPIO5", "IO5"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "CS" },
+      "strapping": "SDIO Slave Timing.",
+      "board_usage": { "comp": "sd_card", "role": "CS" }
+    },
+    {
+      "num": 6,  "labels": ["GPIO6"],  "input": false, "output": false, "od": false, "pu": false, "pd": false, "rtc": false, "pwm": false, "flash": true, "notes": "SPI-Flash – NICHT VERWENDEN!" },
+    {
+      "num": 7,  "labels": ["GPIO7"],  "input": false, "output": false, "od": false, "pu": false, "pd": false, "rtc": false, "pwm": false, "flash": true, "notes": "SPI-Flash – NICHT VERWENDEN!" },
+    {
+      "num": 8,  "labels": ["GPIO8"],  "input": false, "output": false, "od": false, "pu": false, "pd": false, "rtc": false, "pwm": false, "flash": true, "notes": "SPI-Flash – NICHT VERWENDEN!" },
+    {
+      "num": 9,  "labels": ["GPIO9"],  "input": false, "output": false, "od": false, "pu": false, "pd": false, "rtc": false, "pwm": false, "flash": true, "notes": "SPI-Flash – NICHT VERWENDEN!" },
+    {
+      "num": 10, "labels": ["GPIO10"], "input": false, "output": false, "od": false, "pu": false, "pd": false, "rtc": false, "pwm": false, "flash": true, "notes": "SPI-Flash – NICHT VERWENDEN!" },
+    {
+      "num": 11, "labels": ["GPIO11"], "input": false, "output": false, "od": false, "pu": false, "pd": false, "rtc": false, "pwm": false, "flash": true, "notes": "SPI-Flash – NICHT VERWENDEN!" },
+    {
+      "num": 12,
+      "labels": ["GPIO12", "MTDI"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 5, "wifi_ok": false },
+      "touch": { "ch": 5 },
+      "spi_hw": { "bus": "HSPI", "role": "MISO" },
+      "strapping": "MTDI – HIGH beim Boot → 1,8V Flash → Boot-Fehler!",
+      "board_usage": { "comp": "display_ili9341", "role": "MISO" }
+    },
+    {
+      "num": 13,
+      "labels": ["GPIO13", "MTCK"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 4, "wifi_ok": false },
+      "touch": { "ch": 4 },
+      "spi_hw": { "bus": "HSPI", "role": "MOSI" },
+      "board_usage": { "comp": "display_ili9341", "role": "MOSI" }
+    },
+    {
+      "num": 14,
+      "labels": ["GPIO14", "MTMS"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 6, "wifi_ok": false },
+      "touch": { "ch": 6 },
+      "spi_hw": { "bus": "HSPI", "role": "CLK" },
+      "board_usage": { "comp": "display_ili9341", "role": "CLK" }
+    },
+    {
+      "num": 15,
+      "labels": ["GPIO15", "MTDO"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 3, "wifi_ok": false },
+      "touch": { "ch": 3 },
+      "spi_hw": { "bus": "HSPI", "role": "CS" },
+      "strapping": "MTDO.",
+      "board_usage": { "comp": "display_ili9341", "role": "CS" }
+    },
+    {
+      "num": 16,
+      "labels": ["GPIO16"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 2, "role": "RX" },
+      "board_usage": { "comp": "rgb_led", "role": "LED_G" }
+    },
+    {
+      "num": 17,
+      "labels": ["GPIO17"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "uart_default": { "unit": 2, "role": "TX" },
+      "board_usage": { "comp": "rgb_led", "role": "LED_B" }
+    },
+    {
+      "num": 18,
+      "labels": ["GPIO18"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "CLK" },
+      "board_usage": { "comp": "sd_card", "role": "CLK" }
+    },
+    {
+      "num": 19,
+      "labels": ["GPIO19"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "MISO" },
+      "board_usage": { "comp": "sd_card", "role": "MISO" }
+    },
+    {
+      "num": 21,
+      "labels": ["GPIO21"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "i2c_default": "SDA",
+      "board_usage": { "comp": "display_ili9341", "role": "BACKLIGHT" }
+    },
+    {
+      "num": 22,
+      "labels": ["GPIO22"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "i2c_default": "SCL",
+      "notes": "Frei! Empfohlen für I2S i2s_lrclk_pin (Speaker-Takt, nicht DAC-Ausgang)."
+    },
+    {
+      "num": 23,
+      "labels": ["GPIO23"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": false, "pwm": true,
+      "spi_hw": { "bus": "VSPI", "role": "MOSI" },
+      "board_usage": { "comp": "sd_card", "role": "MOSI" }
+    },
+    {
+      "num": 25,
+      "labels": ["GPIO25"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 8, "wifi_ok": false },
+      "dac": { "ch": 1, "note": "DAC1 – intern durch I2S-DAC mitaktiviert wenn Speaker genutzt." },
+      "board_usage": {
+        "comp": "touch_xpt2046", "role": "CLK",
+        "note": "Konflikt: GPIO25 = Touch-CLK + DAC1. I2S-Takt-Pins (lrclk/bclk) auf GPIO22/27 legen!"
+      }
+    },
+    {
+      "num": 26,
+      "labels": ["GPIO26"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 9, "wifi_ok": false },
+      "dac": { "ch": 2, "note": "DAC2/Left – Lautsprecher-Ausgang P4-Stecker. Im Silizium fest." },
+      "board_usage": { "comp": "speaker", "role": "DAC2_LEFT" }
+    },
+    {
+      "num": 27,
+      "labels": ["GPIO27"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 2, "ch": 7, "wifi_ok": false },
+      "touch": { "ch": 7 },
+      "notes": "Frei! Empfohlen für I2S i2s_bclk_pin (Speaker-Takt). 10kΩ Pull-up auf Platine."
+    },
+    {
+      "num": 32,
+      "labels": ["GPIO32"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 1, "ch": 4, "wifi_ok": true },
+      "touch": { "ch": 9 },
+      "board_usage": { "comp": "touch_xpt2046", "role": "MOSI" }
+    },
+    {
+      "num": 33,
+      "labels": ["GPIO33"],
+      "input": true, "output": true, "od": true, "pu": true, "pd": true,
+      "rtc": true, "pwm": true,
+      "adc": { "unit": 1, "ch": 5, "wifi_ok": true },
+      "touch": { "ch": 8 },
+      "board_usage": { "comp": "touch_xpt2046", "role": "CS" }
+    },
+    {
+      "num": 34,
+      "labels": ["GPIO34"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 6, "wifi_ok": true },
+      "board_usage": { "comp": "ldr", "role": "ADC" }
+    },
+    {
+      "num": 35,
+      "labels": ["GPIO35"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 7, "wifi_ok": true },
+      "notes": "Frei! INPUT-ONLY, ADC1 WiFi-kompatibel."
+    },
+    {
+      "num": 36,
+      "labels": ["GPIO36", "VP"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 0, "wifi_ok": true },
+      "board_usage": { "comp": "touch_xpt2046", "role": "IRQ" }
+    },
+    {
+      "num": 39,
+      "labels": ["GPIO39", "VN"],
+      "input": true, "output": false, "od": false, "pu": false, "pd": false,
+      "rtc": true, "pwm": false,
+      "adc": { "unit": 1, "ch": 3, "wifi_ok": true },
+      "board_usage": { "comp": "touch_xpt2046", "role": "MISO" }
+    }
+  ]
+}

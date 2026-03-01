@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+.pytest_cache/
+
+# Node / Frontend
+node_modules/
+esphome-forge/frontend/dist/
+esphome-forge/frontend/.vite/
+frontend-dist/
+*.tsbuildinfo
+
+# HA Add-on build artifacts
+esphome-forge/frontend/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# ESPHome (wenn lokal getestet)
+.esphome/
+*.compiled/
+
+# Secrets
+*.env
+secrets.yaml
