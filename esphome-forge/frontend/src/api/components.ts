@@ -5,8 +5,9 @@ import type {
   CustomComponent,
   CustomComponentCreate,
 } from '@/types/component'
+import { API_BASE } from './base'
 
-const BASE = '/api'
+const BASE = API_BASE
 
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`)

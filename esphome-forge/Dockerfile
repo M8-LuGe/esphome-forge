@@ -27,7 +27,8 @@ RUN mkdir -p /app/backend/components/cache/schema \
         for i in z.infolist() if not i.is_dir() and i.filename.endswith('.json')]; \
        print(f'Extracted {len([i for i in z.infolist() if i.filename.endswith(\".json\")])} schemas')" \
        && rm /tmp/schema.zip \
-       && echo "Schema pre-loaded successfully" ) \
+       && echo "Schema pre-loaded successfully" \
+       && date +%s > /app/backend/components/cache/.last_fetch ) \
     || echo "Schema pre-download skipped – will fetch at first runtime start"
 
 # ── Frontend Build ────────────────────────────────────────────────────────────
