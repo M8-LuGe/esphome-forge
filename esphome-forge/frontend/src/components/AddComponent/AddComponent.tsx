@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { generateUUID } from '@/utils/uuid'
 import { useQuery } from '@tanstack/react-query'
 import {
   ArrowLeft,
@@ -165,7 +166,7 @@ export function AddComponent() {
   const handlePinConfirm = (pins: Record<string, number>, config: Record<string, unknown>) => {
     if (!configuringComp) return
     addComponent({
-      uid: crypto.randomUUID(),
+      uid: generateUUID(),
       compType: configuringComp.id,
       name: configuringComp.name,
       pins,
