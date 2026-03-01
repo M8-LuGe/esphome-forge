@@ -17,16 +17,18 @@ RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
 COPY backend/ .
 
-# ── ESPHome-Schema vorab laden (kein GitHub-Call beim ersten Start) ───────────
+# ── ESPHome-Schema vorab laden (optional – wird beim ersten Start nachgeladen) ────────────────
 RUN mkdir -p /app/backend/components/cache/schema \
-    && wget -qO /tmp/schema.zip \
-       "https://github.com/esphome/esphome-schema/releases/latest/download/schema.zip" \
-    && python3 -c "import zipfile,io,pathlib; \
+    && ( wget -qO /tmp/schema.zip \
+         "https://github.com/esphome/esphome-schema/releases/latest/download/schema.zip" \
+       && python3 -c "import zipfile,io,pathlib; \
        z=zipfile.ZipFile('/tmp/schema.zip'); \
        [pathlib.Path(f'/app/backend/components/cache/schema/{i.filename.split(\"/\")[-1]}').write_bytes(z.read(i)) \
         for i in z.infolist() if not i.is_dir() and i.filename.endswith('.json')]; \
        print(f'Extracted {len([i for i in z.infolist() if i.filename.endswith(\".json\")])} schemas')" \
-    && rm /tmp/schema.zip
+       && rm /tmp/schema.zip \
+       && echo "Schema pre-loaded successfully" ) \
+    || echo "Schema pre-download skipped – will fetch at first runtime start"
 
 # ── Frontend Build ────────────────────────────────────────────────────────────
 WORKDIR /app/frontend-src

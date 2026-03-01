@@ -22,8 +22,13 @@ hassio_role: default
 
 # Dateisystem-Mounts
 map:
-  - share:rw    # /share/esphome-forge/ – generierte YAMLs + custom boards
-  - config:rw   # /config/esphome/ – ESPHome YAMLs lesen + schreiben
+  - type: share              # /share/esphome-forge/ – generierte YAMLs + custom boards
+    read_only: false
+  - type: homeassistant_config  # /homeassistant/ – ESPHome YAMLs lesen + schreiben
+    read_only: false
+
+# Kein S6-Overlay – wir starten direkt mit CMD ['/run.sh']
+init: false
 
 # Keine exponierten Optionen in der HA-UI (alles in der App selbst konfigurieren)
 options: {}

@@ -1,4 +1,8 @@
-#!/usr/bin/with-contenv bashio
+#!/bin/bash
+# shellcheck shell=bash
+# Load bashio helper library (available in all HA base images)
+# shellcheck source=/dev/null
+. /usr/lib/bashio/bashio.sh
 
 bashio::log.info "Starting ESPHome Forge v$(bashio::addon.version)..."
 
