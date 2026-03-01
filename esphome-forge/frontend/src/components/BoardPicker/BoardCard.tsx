@@ -74,11 +74,11 @@ export function BoardListRow({ board, selected, onClick }: Props) {
 
       {/* ── Feature-Icons ── */}
       <div className="hidden shrink-0 items-center gap-1.5 md:flex">
-        {board.wifi       && <Wifi      className="h-3.5 w-3.5 text-sky-400"    title="WiFi" />}
-        {board.bluetooth  && <Bluetooth className="h-3.5 w-3.5 text-blue-400"   title={board.bluetooth ?? 'Bluetooth'} />}
-        {board.usb_native && <Usb       className="h-3.5 w-3.5 text-green-400"  title="Native USB" />}
-        {board.has_display && <Monitor  className="h-3.5 w-3.5 text-orange-400" title="Display onboard" />}
-        {board.has_touch  && <Hand      className="h-3.5 w-3.5 text-yellow-400" title="Touch onboard" />}
+        {board.wifi       && <Wifi      className="h-3.5 w-3.5 text-sky-400"    aria-label="WiFi" />}
+        {board.bluetooth  && <Bluetooth className="h-3.5 w-3.5 text-blue-400"   aria-label={board.bluetooth ?? 'Bluetooth'} />}
+        {board.usb_native && <Usb       className="h-3.5 w-3.5 text-green-400"  aria-label="Native USB" />}
+        {board.has_display && <Monitor  className="h-3.5 w-3.5 text-orange-400" aria-label="Display onboard" />}
+        {board.has_touch  && <Hand      className="h-3.5 w-3.5 text-yellow-400" aria-label="Touch onboard" />}
         {board.psram_mb ? (
           <span className="rounded bg-blue-900/40 px-1.5 py-0.5 text-[10px] font-medium text-blue-300 ring-1 ring-blue-700/40">
             PSRAM
